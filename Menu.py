@@ -1,5 +1,5 @@
 import sqlite3
-from CreateDatabase import info_database
+import test_db_code
 
 print("Rapport Systeem")
 print()
@@ -12,7 +12,6 @@ choice = input("Maak een keuze: ")
 
 while choice != "0":
     if choice == "1":
-        info_database()
         print()
         print("Cijfer Invoeren")
         print("-" * 20)
