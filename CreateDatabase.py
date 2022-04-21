@@ -9,7 +9,7 @@ import sqlite3
 
 def info_database():
     db = sqlite3.connect("info_data2.sqlite")
-    db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT)")
+    db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT, )")
 
     cursor = db.cursor()
     naam = 'Jan'

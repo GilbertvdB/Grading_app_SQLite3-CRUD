@@ -19,14 +19,14 @@ while choice != "0":
         print()
         print("Cijfer Invoeren")
         print("-" * 20)
-        naam = input("Naam Scholier: ")
+        scholier = input("Naam Scholier: ")
         vak = input("Kies vak: ")
         cijfer = input("Voer cijfer in:  ")
-        print(naam)
 
-        cursor.execute("INSERT INTO info_data2 (naam, ?) VALUES(?, ?)", (vak, naam, cijfer))
+        cursor.execute(f"INSERT INTO info_data2 (naam, {vak}) VALUES ('{scholier}', '{cijfer}')")
         cursor.close()
         db.commit()
+        choice = 0
     else:
         break
 
