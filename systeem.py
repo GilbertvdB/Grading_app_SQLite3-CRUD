@@ -1,8 +1,8 @@
 import sqlite3
 # from CreateDatabase import info_database
 
-db = sqlite3.connect("info_data2.sqlite")
-db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT, ne TEXT, en TEXT)")
+db = sqlite3.connect("info_data1.sqlite")
+db.execute("CREATE TABLE IF NOT EXISTS info_data1 (naam TEXT, ne TEXT, en TEXT)")
 cursor = db.cursor()
 # menu
 print("Rapport Systeem")
@@ -23,7 +23,7 @@ while choice != "0":
         vak = input("Kies vak: ")
         cijfer = input("Voer cijfer in:  ")
 
-        cursor.execute(f"INSERT INTO info_data2 (naam, {vak}) VALUES ('{scholier}', '{cijfer}')")
+        cursor.execute(f"INSERT INTO info_data1 (naam, {vak}) VALUES ('{scholier}', '{cijfer}')")
         cursor.close()
         db.commit()
         choice = 0
