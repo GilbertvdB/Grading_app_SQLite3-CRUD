@@ -17,8 +17,9 @@ The user has more options after an update is performed. i.e making another udate
 ![code_vx2](https://user-images.githubusercontent.com/101508384/164891977-277d2938-68db-4d06-ad3f-87abe8501555.png)
 
 improvements:
-Add an option to add more subjects. In real life the is more then one or two subjects.
-Add an option to view the repord card of a student. 
+</br>Add an option to add more subjects. In real life the is more then one or two subjects.
+</br>Add an option to view the repord card of a student.
+
 
 vx1.
 
@@ -29,6 +30,7 @@ Every time you run the program it creates a new row in the database.
 ![table_vx1](https://user-images.githubusercontent.com/101508384/164482236-42772574-6fbf-424f-92bf-b845bcfb46d5.png)
 
 improvements: 
-Check if a student already exists and update the grades instead of creating a new row in the database.
-Asking the user if he/she is finished grading before exiting. 
-Return and confirm the updated grades.
+</br>Check if a student already exists and update the grades instead of creating a new row in the database.
+</br>Return and confirm the updated grades.
+</br>Asking the user if he/she is finished grading before exiting. 
+
