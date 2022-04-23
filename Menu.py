@@ -1,22 +1,46 @@
-import sqlite3
-from CreateDatabase import info_database
+# here we test and modify the menu's
+menu = ["Cijfer Invoeren"]
 
-print("Rapport Systeem")
-print()
-print("Menu")
-print("-" * 8)
-print("1. Cijfer Invoeren")
-print("0. Exit")
+sub_menu = ["Nog een update maken?",
+            "Hoofd Menu"]
 
-choice = input("Maak een keuze: ")
 
-while choice != "0":
-    if choice == "1":
-        info_database()
+def menus():
+    print("Hoofd Menu:")
+    for index, optie in enumerate(menu):
+        print(f'{index + 1}: {optie}')
+    print("0: Exit")
+    print("-" * 20)
+
+
+def submenu():
+    print("Sub Menu:")
+    for indx, opties in enumerate(sub_menu):
+        print(f'{indx + 1}: {opties}')
+    print("0: Exit")
+    print("-" * 20)
+
+
+if __name__ == '__main__':
+
+    while True:
+        menus()
+
+        choice = int(input("Kies een optie: "))
         print()
-        print("Cijfer Invoeren")
-        print("-" * 20)
-        naam = input("Naam Scholier: ")
-        print(naam)
-    else:
-        break
+        if choice == 1:
+            while choice == 1:
+                # input_change()
+                submenu()
+
+                choice = int(input("Kies een sub optie: "))
+                print()
+            if choice == 0:
+                break
+            else:
+                pass
+
+        elif choice == 0:
+            break
+
+
