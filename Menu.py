@@ -1,5 +1,8 @@
 # here we test and modify the menu's
-menu = ["Cijfer Invoeren"]
+menu = ["Cijfer Invoeren",
+        "Rapport",
+        "Vak toevoegen"]
+
 
 sub_menu = ["Nog een update maken?",
             "Hoofd Menu"]
@@ -39,7 +42,13 @@ if __name__ == '__main__':
                 break
             else:
                 pass
-
+        elif choice == 2:
+            print("Rapport weergeven")
+            scholier = input("Naam student: ")
+            print(scholier)
+            print_report()
+        elif choice == 3:
+            pass
         elif choice == 0:
             break
 
