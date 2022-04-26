@@ -43,10 +43,7 @@ if __name__ == '__main__':
             else:
                 pass
         elif choice == 2:
-            print("Rapport weergeven")
-            scholier = input("Naam student: ")
-            print(scholier)
-            print_report()
+            pass
         elif choice == 3:
             pass
         elif choice == 0:

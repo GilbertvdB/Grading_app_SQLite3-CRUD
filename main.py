@@ -58,10 +58,20 @@ def print_report():
     data = cursor.execute("SELECT * FROM info_data2")
     cursor.execute(f"SELECT * FROM info_data2 WHERE naam = '{scholier}'")
     row = cursor.fetchone()
+    # horizontal layout
+    # for column in data.description:
+    #     print(column[0], end=' | ')
+    # print()
+    # print(*row)
+    # print()
+
+    # vertical layout
+    x = 0
+    y = '\t'
     for column in data.description:
-        print(column[0], end='|')
-    print()
-    print(*row)
+        print(column[0], row[x], sep=y, end='\n')
+        x += 1
+        y = '\t\t'
     print()
 
 
@@ -123,10 +133,9 @@ while True:
     elif choice == 2:
         print("Rapport weergeven")
         scholier = input("Naam student: ")
-        print(f"Rapport van {scholier}:")
-        print("-" * 20)
+        print(f"\033[4m" + "Rapport" + "\033[0m")
         print_report()
-        input("Druk op enter voor de hoofd menu.")
+        input("Druk op enter voor de hoofd menu...")
 
     elif choice == 3:
         update_vak()
