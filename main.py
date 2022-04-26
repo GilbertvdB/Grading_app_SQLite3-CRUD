@@ -3,6 +3,7 @@ from Menu import menu, sub_menu
 
 
 def menus():
+    print()
     print("Hoofd Menu:")
     for index, optie in enumerate(menu):
         print(f'{index + 1}: {optie}')
@@ -57,10 +58,55 @@ def print_report():
     data = cursor.execute("SELECT * FROM info_data2")
     cursor.execute(f"SELECT * FROM info_data2 WHERE naam = '{scholier}'")
     row = cursor.fetchone()
+    # horizontal layout
+    # for column in data.description:
+    #     print(column[0], end=' | ')
+    # print()
+    # print(*row)
+    # print()
+
+    # vertical layout
+    x = 0
+    y = '\t'
     for column in data.description:
-        print(column[0], end='|')
+        print(column[0], row[x], sep=y, end='\n')
+        x += 1
+        y = '\t\t'
     print()
-    print(*row)
+
+
+def print_vak():
+    data = cursor.execute("SELECT * FROM info_data2")
+    row = cursor.fetchone()
+    for column in data.description:
+        if column[0] != 'naam':
+            print(column[0], end='|')
+    print()
+
+
+def print_vak_list():
+    global vak_list
+    vak_list = []
+    data = cursor.execute("SELECT * FROM info_data2")
+    row = cursor.fetchone()
+    for column in data.description:
+        if column[0] != 'naam':
+            vak_list.append(column[0])
+    print(*vak_list, sep=' | ')
+
+
+def update_vak():
+    print("Huidige vakken")
+    print_vak_list()
+    vak = input("Vak toevoegen: ")
+    if vak in vak_list:
+        print("Vak bestaat al!")
+    else:
+        cursor.execute(f"ALTER TABLE info_data2 ADD {vak} TEXT")
+        print()
+        print(f"Vak: `{vak}` toegevoegd.")
+        db.commit()
+        print_vak_list()
 
 
 db = sqlite3.connect("info_data2.sqlite")
@@ -84,6 +130,15 @@ while True:
             break
         else:
             pass
+    elif choice == 2:
+        print("Rapport weergeven")
+        scholier = input("Naam student: ")
+        print(f"\033[4m" + "Rapport" + "\033[0m")
+        print_report()
+        input("Druk op enter voor de hoofd menu...")
+
+    elif choice == 3:
+        update_vak()
 
     elif choice == 0:
         break
