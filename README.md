@@ -8,6 +8,14 @@ The challenge. Start simple and updrage the codes.
 Task: Create a grading systeem for a school & storing the information in a database. 
 Entering a grade per student per subject.
 
+Update: Vx4
+
+As I'm learning more and more about programming and how its done in real world. I keep coming accross the information that your code should be readable by a human.
+And whenever possible simple codes. That the focus should not only be on a working program but also an easy to read and follow code and structure.
+In the next update I want reflect these changes. And make the program more readable. So that anybody could understand what it does by just reading the code.
+</br> ----------------------------------------------------------------------------------------------------------------
+</br>
+
 vx3.
 This version offers to view a students report card. And allows for the adding of more subjects to the database.
 
