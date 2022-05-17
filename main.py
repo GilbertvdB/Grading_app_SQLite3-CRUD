@@ -1,20 +1,29 @@
-import sqlite3
-from Menu import menu, sub_menu
+"""
+Author: G van der Biezen
+File name: main.py
+
+The following program lets the user, in this case a teacher,
+store grades for students in a database. A grade can be added, a new
+subject can be added and also the option to view a students report card.
+
+Python versie: 3.10.2
+IDE: IntelliJ IDEA Community Edition 2021.3.2
+Last update: 17/05/2021
+"""
+
+import sqlite3  # library to work with sql database
+from Menu import main_menu, sub_menu  # imports the menu lists
 
 
-def menus():
-    print()
-    print("Hoofd Menu:")
-    for index, optie in enumerate(menu):
+# display menu options using a list
+def menu(menu_list: list):
+    """ Generates a menu from a list by using the options in `menu_list`
+
+    :param menu_list: Name of the menu or list where options are defined.
+    """
+    print(f"\033[4m" + "Menu" + "\033[0m")
+    for index, optie in enumerate(menu_list):
         print(f'{index + 1}: {optie}')
-    print("0: Exit")
-    print("-" * 20)
-
-
-def submenu():
-    print("Sub Menu:")
-    for indx, opties in enumerate(sub_menu):
-        print(f'{indx + 1}: {opties}')
     print("0: Exit")
     print("-" * 20)
 
@@ -98,44 +107,53 @@ def print_vak_list():
 def update_vak():
     print("Huidige vakken")
     print_vak_list()
-    vak = input("Vak toevoegen: ")
-    if vak in vak_list:
-        print("Vak bestaat al!")
+    print()
+    vak = input("Vak toevoegen of 0 voor Exit: ")
+    while vak != '0':
+        if vak in vak_list:
+            print("Vak bestaat al!")
+            print()
+        else:
+            cursor.execute(f"ALTER TABLE info_data2 ADD {vak} TEXT")
+            print()
+            print(f"Vak: `{vak}` toegevoegd.")
+            db.commit()
+            print_vak_list()
     else:
-        cursor.execute(f"ALTER TABLE info_data2 ADD {vak} TEXT")
         print()
-        print(f"Vak: `{vak}` toegevoegd.")
-        db.commit()
-        print_vak_list()
 
 
+# connect to the database and create the table if it doesn't exist
 db = sqlite3.connect("info_data2.sqlite")
 db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT, ne TEXT, en TEXT)")
 cursor = db.cursor()
 
 # menu
 while True:
-    menus()
+    menu(main_menu)
 
     choice = int(input("Kies een optie: "))
     print()
     if choice == 1:
-        while choice == 1:
+        while choice != 0:
             update_grade()
-            submenu()
+            menu(sub_menu)
 
-            choice = int(input("Kies een sub optie: "))
+            choice = int(input("Kies een optie: "))
             print()
-        if choice == 0:
-            break
-        else:
-            pass
+        # old code/alternate code for while choice == 1
+        # if choice == 0:
+        #     break
+        # else:
+        #     pass
     elif choice == 2:
         print("Rapport weergeven")
         scholier = input("Naam student: ")
+        print()
         print(f"\033[4m" + "Rapport" + "\033[0m")
         print_report()
         input("Druk op enter voor de hoofd menu...")
+        print()
 
     elif choice == 3:
         update_vak()
