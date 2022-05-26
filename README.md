@@ -3,18 +3,25 @@ Creating a report grading system
 
 
 This will be my practice project. 
-The challenge. Start simple and updrage the codes.
+</br>The challenge is start simple and updrage the codes.
 
 Task: Create a grading systeem for a school & storing the information in a database. 
 Entering a grade per student per subject.
+</br> ----------------------------------------------------------------------------------------------------------------
+</br>
 
-Update: Vx4
+vx4.
+Docstrings & comments has been added to the files. 
 
 As I'm learning more and more about programming and how its done in real world. I keep coming accross the information that your code should be readable by a human.
 And whenever possible simple codes. That the focus should not only be on a working program but also an easy to read and follow code and structure.
 In the next update I want reflect these changes. And make the program more readable. So that anybody could understand what it does by just reading the code.
+
+![docstring_code_vx4](https://user-images.githubusercontent.com/101508384/170393725-4c4e145c-dfca-4d13-92d5-5a1d437334a2.png)
 </br> ----------------------------------------------------------------------------------------------------------------
 </br>
+
+
 
 vx3.
 This version offers to view a students report card. And allows for the adding of more subjects to the database.
@@ -26,6 +33,8 @@ This version offers to view a students report card. And allows for the adding of
 improvements:
 </br>Display the full name of a subject in the report card. Perhabs by creating a seperate databasee. 
 </br>Expand the database to include more information of a student. (name, last name, date of birth)
+</br> ----------------------------------------------------------------------------------------------------------------
+</br>
 
 vx2.
 In this version main.py performs a name data check before adding or updating grades.
@@ -38,7 +47,8 @@ The user has more options after an update is performed. i.e making another udate
 improvements:
 </br>Add an option to add more subjects. In real life the is more then one or two subjects.
 </br>Add an option to view the repord card of a student.
-
+</br> ----------------------------------------------------------------------------------------------------------------
+</br>
 
 vx1.
 
