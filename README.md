@@ -2,7 +2,7 @@
 This will be my practice project. 
 Creating a report grading system
 
-</br>The challenge is tostart simple and updrage the codes.
+</br>The challenge is to start simple and updrage the codes.
 </br> And as im learning more about programming and development make changes that reflect what i've learned.
 
 Task: Create a grading systeem for a school & storing the information in a database. 
