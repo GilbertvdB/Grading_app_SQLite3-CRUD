@@ -13,9 +13,9 @@ Entering a grade per student per subject.
 vx4.
 Docstrings & comments has been added to the files. 
 
-As I'm learning more and more about programming and how its done in real world. I keep coming accross the information that your code should be readable by a human.
-And whenever possible simple codes. That the focus should not only be on a working program but also an easy to read and follow code and structure.
-In the next update I want reflect these changes. And make the program more readable. So that anybody could understand what it does by just reading the code.
+More and more I'm reading and learning about real world application and coding. One thing that stands out is how you write your code is of equal importance.
+Whever possible stick to simple codes. The focus should not only be on a working program but also one that is easy to read and follow. Codes will be expanded or updated either by yourself or someone else. In this version I've made a few changes in this regard.
+
 
 ![docstring_code_vx4](https://user-images.githubusercontent.com/101508384/170393725-4c4e145c-dfca-4d13-92d5-5a1d437334a2.png)
 </br> ----------------------------------------------------------------------------------------------------------------
