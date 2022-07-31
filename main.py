@@ -15,6 +15,12 @@ import sqlite3  # library to work with sql database
 from Menu import main_menu, sub_menu  # imports the menu lists
 
 
+# connect to the database and create the table if it doesn't exist
+db = sqlite3.connect("info_data2.sqlite")
+db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT, ne TEXT, en TEXT)")
+cursor = db.cursor()
+
+
 # display menu options using a list
 def menu(menu_list: list):
     """ Generates a menu from a list by using the options in `menu_list`
@@ -157,43 +163,39 @@ def update_vak():
         print()
 
 
-# connect to the database and create the table if it doesn't exist
-db = sqlite3.connect("info_data2.sqlite")
-db.execute("CREATE TABLE IF NOT EXISTS info_data2 (naam TEXT, ne TEXT, en TEXT)")
-cursor = db.cursor()
-
+if __name__ == '__main__':
 # menu
-while True:
-    menu(main_menu)
+    while True:
+        menu(main_menu)
 
-    choice = int(input("Kies een optie: "))
-    print()
-    if choice == 1:
-        while choice != 0:
-            update_grade()
-            menu(sub_menu)
+        choice = int(input("Kies een optie: "))
+        print()
+        if choice == 1:
+            while choice != 0:
+                update_grade()
+                menu(sub_menu)
 
-            choice = int(input("Kies een optie: "))
+                choice = int(input("Kies een optie: "))
+                print()
+            # old code/alternate code for while choice == 1
+            # if choice == 0:
+            #     break
+            # else:
+            #     pass
+        elif choice == 2:
+            print("Rapport weergeven")
+            scholier = input("Naam student: ")
             print()
-        # old code/alternate code for while choice == 1
-        # if choice == 0:
-        #     break
-        # else:
-        #     pass
-    elif choice == 2:
-        print("Rapport weergeven")
-        scholier = input("Naam student: ")
-        print()
-        print(f"\033[4m" + "Rapport" + "\033[0m")
-        print_report()
-        input("Druk op enter voor de hoofd menu...")
-        print()
+            print(f"\033[4m" + "Rapport" + "\033[0m")
+            print_report()
+            input("Druk op enter voor de hoofd menu...")
+            print()
 
-    elif choice == 3:
-        update_vak()
+        elif choice == 3:
+            update_vak()
 
-    elif choice == 0:
-        break
+        elif choice == 0:
+            break
 
-cursor.close()
-db.close()
+        cursor.close()
+        db.close()
