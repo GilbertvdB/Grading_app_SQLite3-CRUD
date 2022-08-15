@@ -1,5 +1,6 @@
 from school_database import *
 
+
 def hello():
     print("Hello World!")
     input()
@@ -21,13 +22,15 @@ admin_menu = [["Add Student", add_student],
               ["Current Subjects", view_subjects],  # return
               ["Update Subjects", update_subjects],
               ["Update Grade", update_grade],
-              ["Dominion", dom]]
+              ["Dominion", dom]
+              ]
 
 teacher_menu = [["Student Info", get_student_info],
                 ["Teacher Info", get_teacher_info],
                 ["Report Card", get_reportcard],
                 ["View Subjects", view_subjects],
-                ["Update Grade", update_grade]]
+                ["Update Grade", update_grade]
+                ]
 
 student_menu = [["Rapport - Dominion", dom]]
 
@@ -58,7 +61,7 @@ def menus(menu_list: list):
             if level == 0:                          # add
                 print(f'{index + 1}: {optie}')
             elif level == 1:                        # add
-                print(f'{index + 1}: {optie[0]}')   #add
+                print(f'{index + 1}: {optie[0]}')   # add
         print("0: Exit")
         print("-" * 20)
 
