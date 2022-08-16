@@ -204,6 +204,17 @@ def get_stu_info(id_student):
     print(*row)
 
 
+# def search_query(search_string):
+#     if search_string.isnumeric():
+#         student_id = search_string
+#     elif len(search_string) == 2 and search_string.isalnum():
+#         classes_id = search_string
+#     # elif
+#
+#     else:
+#         print("Type a valid search option")
+
+
 def get_reportcard():
     student_id = input("Please enter student id: ")
     print()
@@ -251,7 +262,8 @@ def set_grade(id_student):
     """ Sets the grade for a student. Prompting for the subject and grade."""
     # choose vak and grade
     vak = input("Choose a subject: ")
-    cijfer = input(f"{vak}: ")
+    vak = vak.upper()
+    cijfer = input(f"Enter a grade for {vak}: ")
     print()
     # update grade
     cursor.execute(f"UPDATE Grades_q1 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
@@ -299,6 +311,7 @@ def update_grade():
     print()
 
     if class_name != '':
+        class_name = class_name.upper()
         cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '{class_name}' ")
         rows = cursor.fetchall()
     else:
@@ -324,7 +337,7 @@ def update_grade():
     set_grade(id_student)  # update grade
     print_report(id_student)  # update the user with the changes made.
 
-
+# TODO 16/08 - finish report card view module - the search function
 # TODO finish menu function addage
 # TODO teacher name codes, function to update grades,
 # TODO automate table info display ( add column headers)

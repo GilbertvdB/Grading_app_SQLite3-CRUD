@@ -19,9 +19,10 @@ admin_menu = [["Add Student", add_student],
               ["Add Teacher", add_teacher],
               ["All Teacher Info", get_teacher_info],
               ["All Student Info", get_student_info],
-              ["Current Subjects", view_subjects],  # return
+              ["View Subjects", view_subjects],  # return
               ["Update Subjects", update_subjects],
               ["Update Grade", update_grade],
+              ["Report Card", get_reportcard],
               ["Dominion", dom]
               ]
 
