@@ -23,17 +23,21 @@ admin_menu = [["Add Student", add_student],
               ["Update Subjects", update_subjects],
               ["Update Grade", update_grade],
               ["Report Card", get_reportcard],
+              ["Report Card View", search_query],
               ["Dominion", dom]
               ]
 
 teacher_menu = [["Student Info", get_student_info],
                 ["Teacher Info", get_teacher_info],
                 ["Report Card", get_reportcard],
+                ["Report Card View", search_query],
                 ["View Subjects", view_subjects],
                 ["Update Grade", update_grade]
                 ]
 
-student_menu = [["Rapport - Dominion", dom]]
+student_menu = [["Rapport - Dominion", dom],
+                ["Report Card View", search_query],
+                ]
 
 test_menu = [["Helo", hello], ["Dominion", dom]]
 

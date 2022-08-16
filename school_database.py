@@ -130,7 +130,7 @@ def add_teacher():
 
 
 def get_teacher_info():
-    """ Gets the student info from a view in the database."""
+    """ Gets the teacher info from a view in the database."""
     cursor.execute("SELECT * FROM teacher_registry")
     rows = cursor.fetchall()
 
@@ -204,15 +204,58 @@ def get_stu_info(id_student):
     print(*row)
 
 
-# def search_query(search_string):
-#     if search_string.isnumeric():
-#         student_id = search_string
-#     elif len(search_string) == 2 and search_string.isalnum():
-#         classes_id = search_string
-#     # elif
-#
-#     else:
-#         print("Type a valid search option")
+def search_query():
+    search_string = input("Please enter student id, class or student name: ")
+    print()
+    string_list = search_string.split(' ')
+    if search_string.isnumeric():
+        student_id = search_string
+        # return student_id
+        print()
+        get_stu_info(student_id)
+        print_report(student_id)
+    elif len(search_string) == 2 and search_string.isalnum():
+        class_name = search_string.upper()
+        # return classes_id
+        # return student names from the class name
+        if class_name != '':
+            class_name = class_name.upper()
+            cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '{class_name}' ")
+            rows = cursor.fetchall()
+        else:
+            cursor.execute(f"SELECT * FROM test_student")
+            rows = cursor.fetchall()
+
+        print_format(rows, True)
+
+        # choose student
+        print()
+        student = input("Choose student: ")
+        choice = rows[int(student) - 1]
+        f_name, l_name, c_name, _ = choice
+
+        # get id number
+        id_student = get_reg_id(f_name, l_name)
+
+        # display grades for student
+        print()
+        print("Name: ", f_name, l_name)
+        print("Class: ", c_name)
+        print_report(id_student)
+
+    elif len(string_list) > 1:
+        one_string = ''.join(string_list)
+        if one_string.isalpha():
+            firstname, lastname = string_list
+            cursor.execute(f"SELECT StudentID FROM class_name WHERE Firstname = '{firstname.capitalize()}' "
+                           f"AND Lastname = '{lastname.capitalize()}' ")
+            rows = cursor.fetchone()
+            student_id = rows[0]
+            get_stu_info(student_id)
+            print_report(student_id)
+
+    else:
+        print("Type a valid search option!")
 
 
 def get_reportcard():
@@ -246,7 +289,6 @@ def get_subjects():
     """ Display a list of the known subjects in the database"""
     cursor.execute("SELECT * FROM Subjects")
     row = cursor.fetchall()
-
     return row
 
 
@@ -337,7 +379,7 @@ def update_grade():
     set_grade(id_student)  # update grade
     print_report(id_student)  # update the user with the changes made.
 
-# TODO 16/08 - finish report card view module - the search function
+# TODO 17/08 - compact report card view module
 # TODO finish menu function addage
 # TODO teacher name codes, function to update grades,
 # TODO automate table info display ( add column headers)
