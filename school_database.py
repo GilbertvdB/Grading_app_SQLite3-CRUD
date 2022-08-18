@@ -204,6 +204,7 @@ def get_stu_info(id_student):
     print(*row)
 
 
+# get report card with search options
 def search_query():
     search_string = input("Please enter student id, class or student name: ")
     print()
@@ -218,14 +219,7 @@ def search_query():
         class_name = search_string.upper()
         # return classes_id
         # return student names from the class name
-        if class_name != '':
-            class_name = class_name.upper()
-            cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '{class_name}' ")
-            rows = cursor.fetchall()
-        else:
-            cursor.execute(f"SELECT * FROM test_student")
-            rows = cursor.fetchall()
-
+        rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
         print_format(rows, True)
 
         # choose student
@@ -256,6 +250,17 @@ def search_query():
 
     else:
         print("Type a valid search option!")
+
+
+def get_viewinfo_teststudent(search='off', target=None):
+    if search == 'off':
+        cursor.execute(f"SELECT * FROM test_student")
+        rows = cursor.fetchall()
+        return rows
+    else:
+        cursor.execute(f"SELECT * FROM test_student WHERE {search} = '{target}' ")
+        rows = cursor.fetchall()
+        return rows
 
 
 def get_reportcard():
@@ -349,17 +354,10 @@ def update_grade():
     # 3 data points, class ID, Student ID, subject name
     # prompt student search
     print("--------- Grading ------------- ")
-    class_name = input("Input class name: ")
+    class_name = (input("Input class name: ")).upper()
     print()
 
-    if class_name != '':
-        class_name = class_name.upper()
-        cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '{class_name}' ")
-        rows = cursor.fetchall()
-    else:
-        cursor.execute(f"SELECT * FROM test_student")
-        rows = cursor.fetchall()
-
+    rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
     print_format(rows, True)
 
     # choose student
