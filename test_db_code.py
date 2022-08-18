@@ -65,6 +65,7 @@ def print_format(row, num=False):
             print(num, string)
         else:
             print(string)
+    print()
 
 
 def get_viewinfo_teststudent(search='off', target=None):
@@ -79,7 +80,7 @@ def get_viewinfo_teststudent(search='off', target=None):
 
 
 
-# todo short this
+# todo short this(db search done)
 def update_grade():
     # 3 data points, class ID, Student ID, subject name
     # prompt student search
@@ -87,11 +88,11 @@ def update_grade():
     class_name = (input("Input class name: ")).upper()
     print()
 
+    # db search
     rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
     print_format(rows, True)
 
     # choose student
-    print()
     student = input("Choose student: ")
     choice = rows[int(student) - 1]
     f_name, l_name, c_name, _ = choice

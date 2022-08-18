@@ -196,6 +196,7 @@ def print_format(row, num=False):
             print(num, string)
         else:
             print(string)
+    print()
 
 
 def get_stu_info(id_student):
@@ -204,40 +205,38 @@ def get_stu_info(id_student):
     print(*row)
 
 
+# def fancy_display():
+#     # display grades for student
+#     print()
+#     print("Name: ", f_name, l_name)
+#     print("Class: ", c_name)
+
+
 # get report card with search options
 def search_query():
     search_string = input("Please enter student id, class or student name: ")
     print()
     string_list = search_string.split(' ')
-    if search_string.isnumeric():
+    if search_string.isnumeric():  # student id provided.
         student_id = search_string
-        # return student_id
-        print()
         get_stu_info(student_id)
         print_report(student_id)
-    elif len(search_string) == 2 and search_string.isalnum():
+    elif len(search_string) == 2 and search_string.isalnum():  # class id.
         class_name = search_string.upper()
-        # return classes_id
         # return student names from the class name
         rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
         print_format(rows, True)
 
         # choose student
-        print()
         student = input("Choose student: ")
         choice = rows[int(student) - 1]
-        f_name, l_name, c_name, _ = choice
+        f_name, l_name, _, _ = choice
 
-        # get id number
-        id_student = get_reg_id(f_name, l_name)
+        student_id = get_reg_id(f_name, l_name)  # get id number
+        get_stu_info(student_id)
+        print_report(student_id)
 
-        # display grades for student
-        print()
-        print("Name: ", f_name, l_name)
-        print("Class: ", c_name)
-        print_report(id_student)
-
-    elif len(string_list) > 1:
+    elif len(string_list) > 1:  # firstname and lastname provided.
         one_string = ''.join(string_list)
         if one_string.isalpha():
             firstname, lastname = string_list
@@ -351,31 +350,26 @@ def update_subjects():
 
 
 def update_grade():
-    # 3 data points, class ID, Student ID, subject name
-    # prompt student search
+    # prompt student search by class name
     print("--------- Grading ------------- ")
     class_name = (input("Input class name: ")).upper()
     print()
 
+    # db search
     rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
     print_format(rows, True)
 
     # choose student
-    print()
     student = input("Choose student: ")
     choice = rows[int(student) - 1]
-    f_name, l_name, c_name, _ = choice
+    f_name, l_name, _, _ = choice
 
-    # get id number
-    id_student = get_reg_id(f_name, l_name)
-
-    # display grades for student
-    print()
-    print("Name: ", f_name, l_name)
-    print("Class: ", c_name)
-    print_report(id_student)
-    set_grade(id_student)  # update grade
-    print_report(id_student)  # update the user with the changes made.
+    student_id = get_reg_id(f_name, l_name)  # get id number
+    get_stu_info(student_id)
+    print_report(student_id)
+    set_grade(student_id)  # update grade
+    get_stu_info(student_id)
+    print_report(student_id)  # update the user with the changes made.
 
 # TODO 17/08 - compact report card view module
 # TODO finish menu function addage
