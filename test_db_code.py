@@ -6,7 +6,6 @@
 import sqlite3
 
 
-
 db = sqlite3.connect("school.db")
 cursor = db.cursor()
 
@@ -126,11 +125,14 @@ def key_words(search='off', target=None):
 
 if __name__ == '__main__':
 
-    update_grade()
+    # update_grade()
 
     # rows = key_words(search='Mentor', target='Amber')
     # print_format(rows, True)
 
+    text = "mark benson"
+    string_list = text.title().split(' ')
+    print(string_list)
 
     cursor.close()
     db.close()

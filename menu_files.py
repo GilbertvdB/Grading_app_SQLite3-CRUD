@@ -1,6 +1,7 @@
 from school_database import *
 
 
+
 def hello():
     print("Hello World!")
     input()

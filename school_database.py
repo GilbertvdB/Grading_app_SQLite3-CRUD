@@ -1,7 +1,7 @@
 # codes for editing the school database
 import sqlite3
 import menu_files
-
+from e_mail_generator import email_generator
 
 db = sqlite3.connect("school.db")
 cursor = db.cursor()
@@ -12,6 +12,18 @@ def get_table_info(table: str):
     cursor.execute(f"SELECT * FROM {table}")
     rows = cursor.fetchall()
     return rows
+
+
+# dynamic version of get_table_info
+def get_t_info(search='all', table=None, target=None):
+    if search == 'all':
+        cursor.execute(f"SELECT * FROM {table}")
+        rows = cursor.fetchall()
+        return rows
+    else:
+        cursor.execute(f"SELECT * FROM {table} WHERE {search} = '{target}' ")
+        rows = cursor.fetchall()
+        return rows
 
 
 def get_header(table_name: str):
@@ -91,7 +103,7 @@ def set_grading_profile(student_id, class_id):
 def add_to_reg():
     """ Start the registry process to add a person to the database.
     Returning the firstname of the person. """
-    head = get_header(rg)
+    head = get_header('Registry')
     info = prompt_info(head)
     firstname = info[1][2]
     lastname = info[1][1]
@@ -104,12 +116,15 @@ def add_student():
     # start the registry process and get the FirstName
     student = add_to_reg()
     assign_class = input("Class: ")
-    student_id = get_reg_id(student)  # get studentID
+    student_id = get_reg_id(*student)  # get studentID
     class_id = get_class_id(assign_class)  # get ClassId
     # update ClassRegistry
     update_class_registry(class_id, student_id)
     # create grading profile
     set_grading_profile(student_id, class_id)
+    # create email address
+    row = get_t_info(search='RegId', table='Registry', target=student_id)
+    email_generator(row)
 
 
 def add_teacher():
@@ -199,32 +214,27 @@ def print_format(row, num=False):
     print()
 
 
-def get_stu_info(id_student):
+def get_stu_fullname(id_student):
     cursor.execute(f"SELECT FirstName, LastName FROM Registry WHERE RegId = {id_student} ")
     row = cursor.fetchone()
     print(*row)
 
 
-# def fancy_display():
-#     # display grades for student
-#     print()
-#     print("Name: ", f_name, l_name)
-#     print("Class: ", c_name)
-
-
+# todo rename function
 # get report card with search options
 def search_query():
-    search_string = input("Please enter student id, class or student name: ")
+    search_string = input("Please enter student id, class or student full name: ")
     print()
-    string_list = search_string.split(' ')
+    string_list = search_string.title().split(' ')  # list with names
     if search_string.isnumeric():  # student id provided.
         student_id = search_string
-        get_stu_info(student_id)
+        get_stu_fullname(student_id)
         print_report(student_id)
-    elif len(search_string) == 2 and search_string.isalnum():  # class id.
+    elif len(search_string) == 2 and search_string.isalnum():  # class id prov.
         class_name = search_string.upper()
-        # return student names from the class name
-        rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
+        # return students list from the class name
+        # rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
+        rows = get_t_info(search='ClassName', table='test_student', target=class_name)
         print_format(rows, True)
 
         # choose student
@@ -233,39 +243,23 @@ def search_query():
         f_name, l_name, _, _ = choice
 
         student_id = get_reg_id(f_name, l_name)  # get id number
-        get_stu_info(student_id)
+        print(f_name, l_name)
         print_report(student_id)
-
-    elif len(string_list) > 1:  # firstname and lastname provided.
+    elif len(string_list) > 1:  # firstname and lastname are provided.
         one_string = ''.join(string_list)
         if one_string.isalpha():
-            firstname, lastname = string_list
-            cursor.execute(f"SELECT StudentID FROM class_name WHERE Firstname = '{firstname.capitalize()}' "
-                           f"AND Lastname = '{lastname.capitalize()}' ")
-            rows = cursor.fetchone()
-            student_id = rows[0]
-            get_stu_info(student_id)
+            f_name, l_name = string_list
+            student_id = get_reg_id(f_name, l_name)
+            print(f_name, l_name)
             print_report(student_id)
-
     else:
         print("Type a valid search option!")
-
-
-def get_viewinfo_teststudent(search='off', target=None):
-    if search == 'off':
-        cursor.execute(f"SELECT * FROM test_student")
-        rows = cursor.fetchall()
-        return rows
-    else:
-        cursor.execute(f"SELECT * FROM test_student WHERE {search} = '{target}' ")
-        rows = cursor.fetchall()
-        return rows
 
 
 def get_reportcard():
     student_id = input("Please enter student id: ")
     print()
-    get_stu_info(student_id)
+    get_stu_fullname(student_id)
     print_report(student_id)
 
 
@@ -365,10 +359,10 @@ def update_grade():
     f_name, l_name, _, _ = choice
 
     student_id = get_reg_id(f_name, l_name)  # get id number
-    get_stu_info(student_id)
+    print(f_name, l_name)
     print_report(student_id)
     set_grade(student_id)  # update grade
-    get_stu_info(student_id)
+    print(f_name, l_name)
     print_report(student_id)  # update the user with the changes made.
 
 # TODO 17/08 - compact report card view module
