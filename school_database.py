@@ -131,7 +131,7 @@ def add_teacher():
     """ Adds a teacher profile to the database. """
     # start the registry process and get the FirstName
     teacher_name = add_to_reg()
-    teacher_id = get_reg_id(*teacher_name)  # get studentID
+    teacher_id = get_reg_id(*teacher_name)  # get teacherID
     # create email address
     row = get_t_info(search='RegId', table='Registry', target=teacher_id)
     email_generator(row)
@@ -139,7 +139,6 @@ def add_teacher():
     class_mentor = input("Mentors a class? y/n: ")
     if class_mentor == 'y':
         assign_class = input("Mentor for class: ")
-        teacher_id = get_reg_id(*teacher_name)  # get teacherID
         class_id = get_class_id(assign_class)  # get ClassId
         # update Classes
         update_class(teacher_id, class_id)

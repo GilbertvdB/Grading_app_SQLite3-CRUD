@@ -4,17 +4,26 @@ from school_database import *
 
 def hello():
     print("Hello World!")
-    input()
 
 
 def dom():
     print("Domination!!")
-    input()
 
 
-user_menu = ["Administrator",
+test_user_menu = [
+    "Test",
+    "Administrator",
+    "Teacher",
+    "Student"
+]
+
+
+user_menu = [
+             "Administrator",
              "Teacher",
-             "Student", "Test"]
+             "Student",
+             "Test",
+            ]
 
 admin_menu = [["Add Student", add_student],
               ["Add Teacher", add_teacher],
@@ -23,6 +32,7 @@ admin_menu = [["Add Student", add_student],
               ["View Subjects", view_subjects],  # return
               ["Update Subjects", update_subjects],
               ["Update Grade", update_grade],
+              ["Update Class Mentor", dom],
               ["Report Card", get_reportcard],
               ["Report Card View", search_query],
               ["Dominion", dom]
@@ -43,6 +53,7 @@ student_menu = [["Rapport - Dominion", dom],
 test_menu = [["Helo", hello], ["Dominion", dom]]
 
 main_menu = [user_menu, admin_menu, teacher_menu, student_menu, test_menu]
+# main_menu = [test_user_menu, test_menu]  # for testing
 
 
 def menu(options: list):
@@ -55,19 +66,20 @@ def menu(options: list):
 
 def menus(menu_list: list):
     main = menu_list
-    # here
-    x = 0
-    y = 0
-    level = 0
+    x = y = 0
+    level = "user_menu"
     while True:
-        mn = main[x]
+        if level == "user_menu":  # user menus
+            mn = main[x]
+        elif level == "user_sub_menu":  # user sub menus
+            mn = main[y]
 
         print(f"\033[4m" + "Menu" + "\033[0m")
         for index, optie in enumerate(mn):
-            if level == 0:                          # add
+            if level == "user_menu":
                 print(f'{index + 1}: {optie}')
-            elif level == 1:                        # add
-                print(f'{index + 1}: {optie[0]}')   # add
+            elif level == "user_sub_menu":
+                print(f'{index + 1}: {optie[0]}')
         print("0: Exit")
         print("-" * 20)
 
@@ -76,16 +88,12 @@ def menus(menu_list: list):
 
         if x == 0:
             break
-        elif level == 1:
-            # action goes here
-            # print("Action here")
-            # run = main[y][x - 1]()   # og
-            run = main[y][x - 1][1]()
-
-            break
-
-        level += 1
-        y = x
+        elif level == "user_sub_menu":
+            main[y][x - 1][1]()
+            input()
+        elif level == "user_menu":
+            level = "user_sub_menu"
+            y = x
 
 
 if __name__ == '__main__':
@@ -95,4 +103,4 @@ if __name__ == '__main__':
     # print(main[0][3])   # Test
     # print(main[0][0])   # administrator
 
-    menus(main)
+    menus(main_menu)
