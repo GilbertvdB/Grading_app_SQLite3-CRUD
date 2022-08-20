@@ -15,13 +15,13 @@ def get_table_info(table: str):
 
 
 # dynamic version of get_table_info
-def get_t_info(search='all', table=None, target=None):
+def get_t_info(select='*', search='all', table=None, target=None):
     if search == 'all':
-        cursor.execute(f"SELECT * FROM {table}")
+        cursor.execute(f"SELECT {select} FROM {table}")
         rows = cursor.fetchall()
         return rows
     else:
-        cursor.execute(f"SELECT * FROM {table} WHERE {search} = '{target}' ")
+        cursor.execute(f"SELECT {select} FROM {table} WHERE {search} = '{target}' ")
         rows = cursor.fetchall()
         return rows
 
@@ -206,10 +206,10 @@ def print_format(row, num=False):
             i = items.index(x)
             if x is None:  # if the element is type None
                 blank = '-'
-                num = f"{nummering:<1}"
+                num = f"{nummering:<1}."
                 string += f'{blank:<{(padding[i])}}'
             else:
-                num = f"{nummering:<1}"
+                num = f"{nummering:<1}."
                 string += f'{items[i]:<{(padding[i])}}'
         if on is True:
             print(num, string)
@@ -368,8 +368,34 @@ def update_grade():
     print(f_name, l_name)
     print_report(student_id)  # update the user with the changes made.
 
+
+def update_class_mentor():
+    # get table info
+    rows = get_t_info(select='ClassName, Mentor', table='class_mentors')
+    # print table info
+    print("Class\tMentor")
+    print_format(rows)
+    # choose a class to update
+    class_choice = input("Choose class to update: ")
+    print(class_choice)
+    class_id = get_class_id(class_choice.upper())
+    # get teacher info
+    data = get_t_info(select='RegId, FirstName, LastName', table='teacher_registry')
+    # header, table_name = get_header('teacher_registry')
+    # print(header)
+    print_format(data, True)
+    # choose teacher - Get teacher id
+    teacher = input("Choose teacher: ")
+    choice = data[int(teacher) - 1]
+    reg_id = choice[0]
+    # update class info
+    update_class(reg_id, class_id)
+    print("Class mentor updated!")
+
+
+
+
 # TODO 17/08 - compact report card view module
-# TODO finish menu function addage
 # TODO create update class mentor
 # TODO teacher name codes, function to update grades,
 # TODO automate table info display ( add column headers)
@@ -387,6 +413,7 @@ if __name__ == '__main__':
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
 
+    # update_class_mentor()
 
     cursor.close()
     db.close()
