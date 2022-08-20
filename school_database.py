@@ -131,10 +131,15 @@ def add_teacher():
     """ Adds a teacher profile to the database. """
     # start the registry process and get the FirstName
     teacher_name = add_to_reg()
+    teacher_id = get_reg_id(*teacher_name)  # get studentID
+    # create email address
+    row = get_t_info(search='RegId', table='Registry', target=teacher_id)
+    email_generator(row)
+    # mentors a class option
     class_mentor = input("Mentors a class? y/n: ")
     if class_mentor == 'y':
         assign_class = input("Mentor for class: ")
-        teacher_id = get_reg_id(teacher_name)  # get studentID
+        teacher_id = get_reg_id(*teacher_name)  # get teacherID
         class_id = get_class_id(assign_class)  # get ClassId
         # update Classes
         update_class(teacher_id, class_id)
@@ -233,7 +238,6 @@ def search_query():
     elif len(search_string) == 2 and search_string.isalnum():  # class id prov.
         class_name = search_string.upper()
         # return students list from the class name
-        # rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
         rows = get_t_info(search='ClassName', table='test_student', target=class_name)
         print_format(rows, True)
 
@@ -350,7 +354,7 @@ def update_grade():
     print()
 
     # db search
-    rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
+    rows = get_t_info(search='ClassName', table='test_student', target=class_name)
     print_format(rows, True)
 
     # choose student
@@ -367,10 +371,10 @@ def update_grade():
 
 # TODO 17/08 - compact report card view module
 # TODO finish menu function addage
+# TODO create update class mentor
 # TODO teacher name codes, function to update grades,
 # TODO automate table info display ( add column headers)
 # todo add name and headers get studentinfo
-# todo finish update_grade()
 # todo subject profiles, taal, exact.
 # todo check pivot info for subject & grades table
 
@@ -381,27 +385,9 @@ if __name__ == '__main__':
     cl = 'Classes'
     sb = 'Subjects'
 
-    main = menu_files.main
-    menu_files.menus(main)
+    main_menu = menu_files.main_menu
+    menu_files.menus(main_menu)
 
-    # table info check
-    # for x in get_table_info(sb):
-    #     print(*x)
-
-    # head = get_header(sb)
-    # info = prompt_info(head)
-    # print()
-    # input_info(info)
-
-    # add_student()
-    # add_teacher()
-    # get_student_info()
-
-    # update_grade()
-    # print("Subjects: ")
-    # print_format(get_subjects())
-
-    # update_subjects()
 
     cursor.close()
     db.close()

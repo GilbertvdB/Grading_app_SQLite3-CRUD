@@ -42,7 +42,7 @@ student_menu = [["Rapport - Dominion", dom],
 
 test_menu = [["Helo", hello], ["Dominion", dom]]
 
-main = [user_menu, admin_menu, teacher_menu, student_menu, test_menu]
+main_menu = [user_menu, admin_menu, teacher_menu, student_menu, test_menu]
 
 
 def menu(options: list):
