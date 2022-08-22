@@ -18,6 +18,7 @@ admin_menu = [["Add Student", add_student],
               ["Add Teacher", add_teacher],
               ["All Teacher Info", get_teacher_info],
               ["All Student Info", get_student_info],
+              ["All Class Info", view_class_info],
               ["View Subjects", view_subjects],  # return
               ["Update Subjects", update_subjects],
               ["Update Grade", update_grade],

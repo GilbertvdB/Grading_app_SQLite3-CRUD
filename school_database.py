@@ -14,16 +14,20 @@ def get_table_info(table: str):
     return rows
 
 
+# TODO change -if where to select-  and repair bug - added a header func
+# TODO append the header to the info from the base function?
 # dynamic version of get_table_info
-def get_t_info(select='*', search='all', table=None, target=None):
-    if search == 'all':
-        cursor.execute(f"SELECT {select} FROM {table}")
+def get_t_info(select='*', where='All', table=None, target=None):
+    if where == 'All':
+        col_names = cursor.execute(f"SELECT {select} FROM {table}")
         rows = cursor.fetchall()
-        return rows
+        header = tuple([x[0] for x in col_names.description])  # return column names
+        return rows, header
     else:
-        cursor.execute(f"SELECT {select} FROM {table} WHERE {search} = '{target}' ")
+        col_names = cursor.execute(f"SELECT {select} FROM {table} WHERE {where} = '{target}' ")
         rows = cursor.fetchall()
-        return rows
+        header = tuple([x[0] for x in col_names.description])
+        return rows, header
 
 
 def get_header(table_name: str):
@@ -34,12 +38,22 @@ def get_header(table_name: str):
     x = 0
     for columns in header.description:
         # skip the id column - sql autoincrement
-        if x == 0:
-            x += 1
+        # if x == 0:
+        #     x += 1
+        if 'Id' in columns:
+            continue
         else:
             headers.append(columns[0])
-            x += 1
+            # x += 1
     return tuple(headers), table_name
+
+
+# TODO review both codes
+# modified get header
+def get_simple_header(data):
+    """ Gets the headers for a table."""
+    header = tuple([x[0] for x in data.description])
+    return header
 
 
 def prompt_info(info: tuple):
@@ -123,7 +137,7 @@ def add_student():
     # create grading profile
     set_grading_profile(student_id, class_id)
     # create email address
-    row = get_t_info(search='RegId', table='Registry', target=student_id)
+    row, _ = get_t_info(where='RegId', table='Registry', target=student_id)
     email_generator(row)
 
 
@@ -133,7 +147,7 @@ def add_teacher():
     teacher_name = add_to_reg()
     teacher_id = get_reg_id(*teacher_name)  # get teacherID
     # create email address
-    row = get_t_info(search='RegId', table='Registry', target=teacher_id)
+    row, _ = get_t_info(where='RegId', table='Registry', target=teacher_id)
     email_generator(row)
     # mentors a class option
     class_mentor = input("Mentors a class? y/n: ")
@@ -150,29 +164,18 @@ def add_teacher():
 
 def get_teacher_info():
     """ Gets the teacher info from a view in the database."""
-    cursor.execute("SELECT * FROM teacher_registry")
-    rows = cursor.fetchall()
-
-    header, table_name = get_header('teacher_registry')
-    print(header)
-    # print("Name\t\t\t\t\t", "Class", "Mentor")
-    column_string_length(rows)
-    print_format(rows)
+    info, header = get_t_info(select='FirstName, LastName, Email',
+                              table='teacher_registry')
+    info.insert(0, header)
+    print_format(info)
 
 
 def get_student_info():
     """ Gets the student info from a view in the database."""
-    cursor.execute("SELECT * FROM test_student")
-    rows = cursor.fetchall()
-
-    header, table_name = get_header('test_student')
-    print(header)
-    # for column in data.description:
-    #     print(column[0], end=' ')
-
-    print("Name\t\t\t\t\t", "Class", "Mentor")
-    column_string_length(rows)
-    print_format(rows)
+    info, header = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
+                              table='test_student')
+    info.insert(0, header)
+    print_format(info)
 
 
 def column_string_length(row):
@@ -237,7 +240,8 @@ def search_query():
     elif len(search_string) == 2 and search_string.isalnum():  # class id prov.
         class_name = search_string.upper()
         # return students list from the class name
-        rows = get_t_info(search='ClassName', table='test_student', target=class_name)
+        rows, header = get_t_info(where='ClassName', table='test_student', target=class_name)
+        rows.insert(0, header)
         print_format(rows, True)
 
         # choose student
@@ -353,7 +357,7 @@ def update_grade():
     print()
 
     # db search
-    rows = get_t_info(search='ClassName', table='test_student', target=class_name)
+    rows, header = get_t_info(where='ClassName', table='test_student', target=class_name)
     print_format(rows, True)
 
     # choose student
@@ -370,42 +374,43 @@ def update_grade():
 
 
 def update_class_mentor():
-    # get table info
-    rows = get_t_info(select='ClassName, Mentor', table='class_mentors')
-    # print table info
+    # get class mentor info
+    class_mentor_info, header = get_t_info(select='ClassName, Mentor', table='class_mentors')
     print("Class\tMentor")
-    print_format(rows)
-    # choose a class to update
+    print_format(class_mentor_info)
     class_choice = input("Choose class to update: ")
-    print(class_choice)
     class_id = get_class_id(class_choice.upper())
     # get teacher info
-    data = get_t_info(select='RegId, FirstName, LastName', table='teacher_registry')
-    # header, table_name = get_header('teacher_registry')
-    # print(header)
+    data, header = get_t_info(select='RegId, FirstName, LastName', table='teacher_registry')
     print_format(data, True)
-    # choose teacher - Get teacher id
-    teacher = input("Choose teacher: ")
-    choice = data[int(teacher) - 1]
-    reg_id = choice[0]
-    # update class info
+    choice = input("Choose teacher: ")
+    teacher_info = data[int(choice) - 1]
+    reg_id = teacher_info[0]
     update_class(reg_id, class_id)
     print("Class mentor updated!")
 
 
+def view_class_info():
+    class_choice = (input("Choose a class or press enter for all: ")).upper()
+    if class_choice == '':
+        info, header = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
+                                  table='test_student')
+    else:
+        info, header = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
+                                  table='test_student', where='ClassName',
+                                  target=class_choice)
+    info.insert(0, header)
+    print_format(info)
 
 
+# TODO 22/08 - create view class info function, updated table headers
 # TODO 17/08 - compact report card view module
-# TODO create update class mentor
 # TODO teacher name codes, function to update grades,
-# TODO automate table info display ( add column headers)
-# todo add name and headers get studentinfo
 # todo subject profiles, taal, exact.
 # todo check pivot info for subject & grades table
 
 
 if __name__ == '__main__':
-
     rg = 'Registry'
     cl = 'Classes'
     sb = 'Subjects'
@@ -413,6 +418,12 @@ if __name__ == '__main__':
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
 
+    # info, header = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
+    #                           table='test_student')
+    # info.insert(0, header)
+    # print_format(info)
+
+    # view_class_info()
     # update_class_mentor()
 
     cursor.close()
