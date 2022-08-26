@@ -8,7 +8,7 @@ subject can be added and also the option to view a students report card.
 
 Python versie: 3.10.2
 IDE: IntelliJ IDEA Community Edition 2021.3.2
-Last update: 26/05/2021
+Last update: 26/05/2022
 """
 
 import sqlite3  # library to work with sql database

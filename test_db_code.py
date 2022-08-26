@@ -9,6 +9,32 @@ import sqlite3
 db = sqlite3.connect("school.db")
 cursor = db.cursor()
 
+# original
+# def print_format(row, num=False):
+#     """ Prints the columns from tuples in a list neatly spaced. With the
+#      option the add sequential numbers in the front by stating True as
+#      second argument. """
+#     padding = column_string_length(row)
+#     on = num
+#     # display a list of tuples neatly
+#     nummering = 0
+#     for items in row:
+#         string = ''
+#         nummering += 1
+#         for x in items:
+#             i = items.index(x)
+#             if x is None:  # if the element is type None
+#                 blank = '-'
+#                 num = f"{nummering:<1}."
+#                 string += f'{blank:<{(padding[i])}}'
+#             else:
+#                 num = f"{nummering:<1}."
+#                 string += f'{items[i]:<{(padding[i])}}'
+#         if on is True:
+#             print(num, string)
+#         else:
+#             print(string)
+#     print()
 
 # def search_query(search_string):
 #     string_list = search_string.split(' ')
@@ -40,99 +66,68 @@ def column_string_length(row):
     return len_list
 
 
-def print_format(row, num=False):
+def print_format(row, number="off", head="off"):
     """ Prints the columns from tuples in a list neatly spaced. With the
      option the add sequential numbers in the front by stating True as
      second argument. """
     padding = column_string_length(row)
-    on = num
     # display a list of tuples neatly
-    nummering = 0
+    numbering = 0
     for items in row:
         string = ''
-        nummering += 1
+        numbering += 1
+        if row.index(items) == 0:
+            numbering = 0
+            if head == "off":
+                continue
         for x in items:
             i = items.index(x)
             if x is None:  # if the element is type None
                 blank = '-'
-                num = f"{nummering:<1}"
+                num = f"{numbering:<1}."
                 string += f'{blank:<{(padding[i])}}'
-            else:
-                num = f"{nummering:<1}"
+            elif row.index(items) == 0:  # header
+                num = f"{' ':<1} "
                 string += f'{items[i]:<{(padding[i])}}'
-        if on is True:
+            else:
+                num = f"{numbering:<1}."
+                string += f'{items[i]:<{(padding[i])}}'
+        if number == "on":
             print(num, string)
         else:
             print(string)
     print()
 
 
-def get_viewinfo_teststudent(search='off', target=None):
-    if search == 'off':
-        cursor.execute(f"SELECT * FROM test_student")
-        rows = cursor.fetchall()
-        return rows
-    else:
-        cursor.execute(f"SELECT * FROM test_student WHERE {search} = '{target}' ")
-        rows = cursor.fetchall()
-        return rows
-
-
-
-# todo short this(db search done)
-def update_grade():
-    # 3 data points, class ID, Student ID, subject name
-    # prompt student search
-    print("--------- Grading ------------- ")
-    class_name = (input("Input class name: ")).upper()
-    print()
-
-    # db search
-    rows = get_viewinfo_teststudent(search='ClassName', target=class_name)
-    print_format(rows, True)
-
-    # choose student
-    student = input("Choose student: ")
-    choice = rows[int(student) - 1]
-    f_name, l_name, c_name, _ = choice
-
-    # get id number
-    id_student = get_reg_id(f_name, l_name)
-
-    # display grades for student
-    print()
-    print("Name: ", f_name, l_name)
-    print("Class: ", c_name)
-    print_report(id_student)
-    set_grade(id_student)  # update grade
-    print_report(id_student)  # update the user with the changes made.
-
-
-def key_words(search='off', target=None):
-    # def key_words(search='off', firstname=None, lastname=None, classname=None, mentor=None):
-    #     lst = [firstname, lastname, classname, mentor]
-    #     result = [x for x in lst if bool(x) is True]
-    if search == 'off':
-        print("search mode is Off")
-        cursor.execute(f"SELECT * FROM test_student")
-        rows = cursor.fetchall()
-        return rows
-    else:
-        print("search mode is On.", search, target)
-        cursor.execute(f"SELECT * FROM test_student WHERE {search} = '{target}' ")
-        rows = cursor.fetchall()
-        return rows
-
 if __name__ == '__main__':
 
-    # update_grade()
+    cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '1A' ")
+    rows = cursor.fetchall()
 
-    # rows = key_words(search='Mentor', target='Amber')
-    # print_format(rows, True)
+    header = ['FirstName', 'LastName', 'Class', 'Mentor']
+    rows.insert(0, header)
+    print(type(rows))
+    num = 0
+    head = 'on'
+    for items in rows:
+        # skip header and dont display
+        if head == 'off':
+            if rows.index(items) == 0:
+                num += 1
+                continue
+            else:
+                print(num, items)
+                num += 1
+        elif head == 'on':  # display header
+            if rows.index(items) == 0:
+                print(items)
+                num += 1
+            else:
+                print(num, items)
+                num += 1
 
-    text = "mark benson"
-    string_list = text.title().split(' ')
-    print(string_list)
+    print()
+    print_format(rows, number="on", head="off")
 
     cursor.close()
     db.close()

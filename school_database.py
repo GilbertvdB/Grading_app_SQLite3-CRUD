@@ -14,7 +14,6 @@ def get_table_info(table: str):
     return rows
 
 
-# TODO change -if where to select-  and repair bug - added a header func
 # TODO append the header to the info from the base function?
 # dynamic version of get_table_info
 def get_t_info(select='*', where='All', table=None, target=None):
@@ -22,12 +21,14 @@ def get_t_info(select='*', where='All', table=None, target=None):
         col_names = cursor.execute(f"SELECT {select} FROM {table}")
         rows = cursor.fetchall()
         header = tuple([x[0] for x in col_names.description])  # return column names
-        return rows, header
+        rows.insert(0, header)
+        return rows
     else:
         col_names = cursor.execute(f"SELECT {select} FROM {table} WHERE {where} = '{target}' ")
         rows = cursor.fetchall()
         header = tuple([x[0] for x in col_names.description])
-        return rows, header
+        rows.insert(0, header)
+        return rows
 
 
 def get_header(table_name: str):
@@ -40,7 +41,7 @@ def get_header(table_name: str):
         # skip the id column - sql autoincrement
         # if x == 0:
         #     x += 1
-        if 'Id' in columns:
+        if 'Id' in columns[0]:
             continue
         else:
             headers.append(columns[0])
@@ -137,7 +138,7 @@ def add_student():
     # create grading profile
     set_grading_profile(student_id, class_id)
     # create email address
-    row, _ = get_t_info(where='RegId', table='Registry', target=student_id)
+    row = get_t_info(where='RegId', table='Registry', target=student_id)
     email_generator(row)
 
 
@@ -147,7 +148,7 @@ def add_teacher():
     teacher_name = add_to_reg()
     teacher_id = get_reg_id(*teacher_name)  # get teacherID
     # create email address
-    row, _ = get_t_info(where='RegId', table='Registry', target=teacher_id)
+    row = get_t_info(where='RegId', table='Registry', target=teacher_id)
     email_generator(row)
     # mentors a class option
     class_mentor = input("Mentors a class? y/n: ")
@@ -164,18 +165,16 @@ def add_teacher():
 
 def get_teacher_info():
     """ Gets the teacher info from a view in the database."""
-    info, header = get_t_info(select='FirstName, LastName, Email',
-                              table='teacher_registry')
-    info.insert(0, header)
-    print_format(info)
+    info = get_t_info(select='FirstName, LastName, Email',
+                      table='teacher_registry')
+    print_format(info, head='on')
 
 
 def get_student_info():
     """ Gets the student info from a view in the database."""
-    info, header = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
-                              table='test_student')
-    info.insert(0, header)
-    print_format(info)
+    info = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
+                      table='test_student')
+    print_format(info, head='on')
 
 
 def column_string_length(row):
@@ -194,27 +193,33 @@ def column_string_length(row):
     return len_list
 
 
-def print_format(row, num=False):
+def print_format(row, number="off", head="off"):
     """ Prints the columns from tuples in a list neatly spaced. With the
      option the add sequential numbers in the front by stating True as
      second argument. """
     padding = column_string_length(row)
-    on = num
     # display a list of tuples neatly
-    nummering = 0
+    numbering = 0
     for items in row:
         string = ''
-        nummering += 1
+        numbering += 1
+        if row.index(items) == 0:
+            numbering = 0
+            if head == "off":
+                continue
         for x in items:
             i = items.index(x)
             if x is None:  # if the element is type None
                 blank = '-'
-                num = f"{nummering:<1}."
+                num = f"{numbering:<1}."
                 string += f'{blank:<{(padding[i])}}'
-            else:
-                num = f"{nummering:<1}."
+            elif row.index(items) == 0:  # header
+                num = f"{' ':<1} "
                 string += f'{items[i]:<{(padding[i])}}'
-        if on is True:
+            else:
+                num = f"{numbering:<1}."
+                string += f'{items[i]:<{(padding[i])}}'
+        if number == "on":
             print(num, string)
         else:
             print(string)
@@ -240,13 +245,13 @@ def search_query():
     elif len(search_string) == 2 and search_string.isalnum():  # class id prov.
         class_name = search_string.upper()
         # return students list from the class name
-        rows, header = get_t_info(where='ClassName', table='test_student', target=class_name)
-        rows.insert(0, header)
-        print_format(rows, True)
+        rows = get_t_info(select='FirstName, Lastname, ClassName as Class, Mentor',
+                          where='ClassName', table='test_student', target=class_name)
+        print_format(rows, number="on", head="on")
 
         # choose student
         student = input("Choose student: ")
-        choice = rows[int(student) - 1]
+        choice = rows[int(student)]
         f_name, l_name, _, _ = choice
 
         student_id = get_reg_id(f_name, l_name)  # get id number
@@ -299,22 +304,30 @@ def get_subjects():
 
 def view_subjects():
     subjects = get_subjects()
-    print()
     print("Current Subjects: ")
-    print_format(subjects)
-    print()
+    print_format(subjects, head='on')
 
 
 def set_grade(id_student):
     """ Sets the grade for a student. Prompting for the subject and grade."""
-    # choose vak and grade
-    vak = input("Choose a subject: ")
-    vak = vak.upper()
-    cijfer = input(f"Enter a grade for {vak}: ")
-    print()
-    # update grade
-    cursor.execute(f"UPDATE Grades_q1 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
-    db.commit()  # confirm the changes in the database.
+    loop = "on"
+    while loop == "on":
+        # choose vak and grade
+        vak = input("Choose a subject: ")
+        vak = vak.upper()
+        cijfer = input(f"Enter a grade for {vak}: ")
+        print()
+        # update grade
+        cursor.execute(f"UPDATE Grades_q1 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
+        db.commit()  # confirm the changes in the database.
+        # update another subject?
+        choice = input("Continue updating? Y / N: ")
+        if choice == 'Y' or choice == 'y':
+            print()
+            continue
+        else:
+            print()
+            loop = "off"
 
 
 def update_subjects():
@@ -357,13 +370,15 @@ def update_grade():
     print()
 
     # db search
-    rows, header = get_t_info(where='ClassName', table='test_student', target=class_name)
-    print_format(rows, True)
+    rows = get_t_info(select='FirstName, Lastname', where='ClassName',
+                      table='test_student', target=class_name)
+    print_format(rows, number="on", head="on")
 
     # choose student
     student = input("Choose student: ")
-    choice = rows[int(student) - 1]
-    f_name, l_name, _, _ = choice
+    choice = rows[int(student)]
+    # f_name, l_name, _, _ = choice
+    f_name, l_name = choice[0], choice[1]
 
     student_id = get_reg_id(f_name, l_name)  # get id number
     print(f_name, l_name)
@@ -375,32 +390,31 @@ def update_grade():
 
 def update_class_mentor():
     # get class mentor info
-    class_mentor_info, header = get_t_info(select='ClassName, Mentor', table='class_mentors')
-    print("Class\tMentor")
-    print_format(class_mentor_info)
+    class_mentor_info = get_t_info(select='ClassName as Class, Mentor', table='class_mentors')
+    print_format(class_mentor_info, head="on")
     class_choice = input("Choose class to update: ")
     class_id = get_class_id(class_choice.upper())
     # get teacher info
-    data, header = get_t_info(select='RegId, FirstName, LastName', table='teacher_registry')
-    print_format(data, True)
+    data = get_t_info(select='FirstName, LastName, RegId as Code', table='teacher_registry')
+    print_format(data, number="on", head="on")
     choice = input("Choose teacher: ")
-    teacher_info = data[int(choice) - 1]
-    reg_id = teacher_info[0]
+    teacher_info = data[int(choice)]
+    reg_id = teacher_info[2]
     update_class(reg_id, class_id)
     print("Class mentor updated!")
+    print()
 
 
 def view_class_info():
-    class_choice = (input("Choose a class or press enter for all: ")).upper()
+    class_choice = (input("Enter a class or press enter for all: ")).upper()
     if class_choice == '':
-        info, header = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
-                                  table='test_student')
+        info = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
+                          table='test_student')
     else:
-        info, header = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
-                                  table='test_student', where='ClassName',
-                                  target=class_choice)
-    info.insert(0, header)
-    print_format(info)
+        info = get_t_info(select='ClassName as Class, FirstName, LastName, Mentor',
+                          table='test_student', where='ClassName',
+                          target=class_choice)
+    print_format(info, head='on')
 
 
 # TODO 22/08 - create view class info function, updated table headers
@@ -418,10 +432,6 @@ if __name__ == '__main__':
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
 
-    # info, header = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
-    #                           table='test_student')
-    # info.insert(0, header)
-    # print_format(info)
 
     # view_class_info()
     # update_class_mentor()
