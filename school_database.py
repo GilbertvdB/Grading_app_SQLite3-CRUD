@@ -14,7 +14,6 @@ def get_table_info(table: str):
     return rows
 
 
-# TODO append the header to the info from the base function?
 # dynamic version of get_table_info
 def get_t_info(select='*', where='All', table=None, target=None):
     if where == 'All':
@@ -49,7 +48,7 @@ def get_header(table_name: str):
     return tuple(headers), table_name
 
 
-# TODO review both codes
+# TODO review both codes - absolete? given its in get t table?
 # modified get header
 def get_simple_header(data):
     """ Gets the headers for a table."""
@@ -98,20 +97,32 @@ def get_class_id(class_name):
 def update_class_registry(class_id, student_id):
     """ Updates the class registry with a class id and a student id."""
     cursor.execute(f'''INSERT INTO ClassRegistry 
-    VALUES ({class_id}, {student_id}) ''')
+    VALUES ('{class_id}', {student_id}) ''')
     db.commit()
 
 
 def update_class(mentor_id, class_id):
     """ Updates the class table."""
-    cursor.execute(f"UPDATE Classes SET MentorId = {mentor_id} WHERE ClassId = {class_id} ")
+    cursor.execute(f"UPDATE Classes SET MentorId = {mentor_id} WHERE ClassId = '{class_id}' ")
     db.commit()
+
+
+def set_class(class_name, mentor_id="", year='22'):
+    """ Updates the class table."""
+    cursor.execute(f"INSERT INTO Classes VALUES('{year + class_name}','{class_name}','{mentor_id}')")
+    db.commit()
+
+
+def add_class():
+    class_name = input("Enter new class name: ")
+    mentor_id = input("Enter Mentor Id or press Enter to skip")
+    set_class(class_name.upper(), mentor_id)
 
 
 def set_grading_profile(student_id, class_id):
     """ Creates a new grading profile from a class id and student id."""
     cursor.execute(f"INSERT INTO Grades_q1 ('StudentId', 'ClassID') "
-                   f"VALUES ({student_id}, {class_id}) ")
+                   f"VALUES ({student_id}, '{class_id}') ")
     db.commit()
 
 
@@ -417,11 +428,17 @@ def view_class_info():
     print_format(info, head='on')
 
 
-# TODO 22/08 - create view class info function, updated table headers
+def view_grades():
+    row = get_t_info(table='all_grades')
+    print_format(row, head='on')
+
+# create view class info function, updated table headers
 # TODO 17/08 - compact report card view module
 # TODO teacher name codes, function to update grades,
+# todo display all grades for subject, for class.
 # todo subject profiles, taal, exact.
 # todo check pivot info for subject & grades table
+# todo expand grades tables to Q1 Q2 Q3 Q4 year.
 
 
 if __name__ == '__main__':
@@ -432,6 +449,10 @@ if __name__ == '__main__':
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
 
+    # add_class()
+    # view_grades()
+    # row = get_t_info(table='Grades_q1')
+    # print_format(row, head='on')
 
     # view_class_info()
     # update_class_mentor()
