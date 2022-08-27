@@ -15,6 +15,16 @@ Creating a report grading system
 </br>
 
 
+Vx6
+
+</br>For this version i've uploaded files that ive been working on. This version uses a more dynamic database where its using more than 1 table to store data.
+</br>
+</br> Functions have been created to deal a database consisting of more then one table with information.
+</br> I've stop using main.py and my new main is school_database.py. The database for this py file has also been uploaded.(school.db) 
+
+
+</br> ----------------------------------------------------------------------------------------------------------------
+</br>
 
 Vx5
 </br>update: For this version I haven't done much at all as I've been focusing on the exams during this period.
