@@ -30,6 +30,7 @@ def get_t_info(select='*', where='All', table=None, target=None):
         return rows
 
 
+# todo review - search get_header
 def get_header(table_name: str):
     """ Gets the headers for a table. Skipping the first column. The
     id column auto increments in sql."""
@@ -38,22 +39,11 @@ def get_header(table_name: str):
     x = 0
     for columns in header.description:
         # skip the id column - sql autoincrement
-        # if x == 0:
-        #     x += 1
         if 'Id' in columns[0]:
             continue
         else:
             headers.append(columns[0])
-            # x += 1
     return tuple(headers), table_name
-
-
-# TODO review both codes - absolete? given its in get t table?
-# modified get header
-def get_simple_header(data):
-    """ Gets the headers for a table."""
-    header = tuple([x[0] for x in data.description])
-    return header
 
 
 def prompt_info(info: tuple):
@@ -113,7 +103,16 @@ def set_class(class_name, mentor_id="", year='22'):
     db.commit()
 
 
+def get_classes():
+    """ Get all info from the Classes table and return the data."""
+    cursor.execute("SELECT * FROM Classes")
+    data = cursor.fetchall()
+    return data
+
+
 def add_class():
+    """ Prompts user for information and adds a new class
+    to the Classes table. MentorId is optional."""
     class_name = input("Enter new class name: ")
     mentor_id = input("Enter Mentor Id or press Enter to skip")
     set_class(class_name.upper(), mentor_id)
@@ -175,32 +174,32 @@ def add_teacher():
 
 
 def get_teacher_info():
-    """ Gets the teacher info from a view in the database."""
+    """ Gets the teacher info from a view in the database and prints it out."""
     info = get_t_info(select='FirstName, LastName, Email',
                       table='teacher_registry')
     print_format(info, head='on')
 
 
 def get_student_info():
-    """ Gets the student info from a view in the database."""
+    """ Gets the student info from a view in the database and prints it out."""
     info = get_t_info(select='FirstName, LastName, ClassName as Class, Mentor',
                       table='test_student')
     print_format(info, head='on')
 
 
-def column_string_length(row):
+def column_string_length(rows):
     """ Voor elke kolom van een lijst die uit tuples bestaat, wordt
     de lengte van de langste string opgeslagen in een lijst.
     :return: de maximale string lengte voor elke kolom."""
-    length = len(row[0])
-    len_list = [0 for _ in range(length)]
+    len_rows = len(rows)
+    len_items = len(rows[0])
+    len_list = [0 for _ in range(len_items)]
     # Vergelijk elke regel met elkaar en slaat de langste lengte op.
-    x = 0
-    while x < len(row[0]):
-        for items in row:
-            if len(str(items[x])) > len_list[x]:
-                len_list[x] = len(str(items[x])) + 4  # Lengte tab is +4.
-        x += 1
+    for x in range(len_rows):
+        for y in range(len_items):
+            item = rows[x][y]
+            if len(str(item)) + 4 > len_list[y]:
+                len_list[y] = len(str(item)) + 4
     return len_list
 
 
@@ -428,14 +427,62 @@ def view_class_info():
     print_format(info, head='on')
 
 
-def view_grades():
+def grade_choose_subject():
+    valid_choice = False
+    while valid_choice is not True:
+        subject = (input("Enter a subject or press Enter for all: ")).upper()
+        subject_info = get_subjects()  # exam. [(1, NE, Nederlands), ...]
+        subject_list = [x[1] for x in subject_info]  # get second items
+        if subject != '' and subject not in subject_list:
+            print("Not a valid subject. Please try again")
+        else:
+            valid_choice = True  # stop evaluation and proceed
+            return subject
+
+
+def grade_choose_classes():
+    valid_choice = False
+    while valid_choice is not True:
+        classes = (input("Enter a class or press Enter for all: ")).upper()
+        classes_info = get_classes()  # exam. [(221A, 1A, 13), ...]
+        classes_list = [x[1] for x in classes_info]  # get second items
+        if classes != '' and classes not in classes_list:
+            print("Not a valid class. Please try again")
+        else:
+            valid_choice = True  # stop evaluation and proceed
+            return classes
+
+
+def view_grades_all():
     row = get_t_info(table='all_grades')
     print_format(row, head='on')
 
+
+def grade_display_results(subject, classes):
+    if classes == '' and subject == '':
+        view_grades_all()
+    elif classes == '':
+        row = get_t_info(select=f'{subject}', table='all_grades')
+        print(*[x[0] for x in row if x[0] is not None], sep='\n')
+    elif subject == '':
+        row = get_t_info(select='*', table='all_grades',
+                         where='Class', target=f'{classes}')
+        print_format(row, head='on')
+    else:
+        row = get_t_info(select=f'{subject}', table='all_grades',
+                         where='Class', target=f'{classes}')
+        print(*[x[0] for x in row if x[0] is not None], sep='\n')
+
+
+def view_grade():
+    choice_subject = grade_choose_subject()
+    choice_class = grade_choose_classes()
+    print()
+    grade_display_results(choice_subject, choice_class)
+
+
 # create view class info function, updated table headers
-# TODO 17/08 - compact report card view module
 # TODO teacher name codes, function to update grades,
-# todo display all grades for subject, for class.
 # todo subject profiles, taal, exact.
 # todo check pivot info for subject & grades table
 # todo expand grades tables to Q1 Q2 Q3 Q4 year.
@@ -449,13 +496,7 @@ if __name__ == '__main__':
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
 
-    # add_class()
-    # view_grades()
-    # row = get_t_info(table='Grades_q1')
-    # print_format(row, head='on')
 
-    # view_class_info()
-    # update_class_mentor()
 
     cursor.close()
     db.close()

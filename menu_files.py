@@ -23,7 +23,7 @@ admin_menu = [["Add Student", add_student],
               ["Update Class Mentor", update_class_mentor],
               ["View Subjects", view_subjects],  # return
               ["Update Subjects", update_subjects],
-              ["View Grades", view_grades],
+              ["View Grades", view_grade],
               ["Update Grades", update_grade],
               ["Report Card", get_reportcard],
               ["Report Card View", search_query],

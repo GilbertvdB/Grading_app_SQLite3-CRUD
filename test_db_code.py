@@ -9,6 +9,12 @@ import sqlite3
 db = sqlite3.connect("school.db")
 cursor = db.cursor()
 
+# modified get header
+# def get_simple_header(data):
+#     """ Gets the headers for a table."""
+#     header = tuple([x[0] for x in data.description])
+#     return header
+
 # original
 # def print_format(row, num=False):
 #     """ Prints the columns from tuples in a list neatly spaced. With the
