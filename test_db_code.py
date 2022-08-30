@@ -107,33 +107,9 @@ def print_format(row, number="off", head="off"):
 
 if __name__ == '__main__':
 
-    cursor.execute(f"SELECT * FROM test_student WHERE ClassName = '1A' ")
-    rows = cursor.fetchall()
-
-    header = ['FirstName', 'LastName', 'Class', 'Mentor']
-    rows.insert(0, header)
-    print(type(rows))
-    num = 0
-    head = 'on'
-    for items in rows:
-        # skip header and dont display
-        if head == 'off':
-            if rows.index(items) == 0:
-                num += 1
-                continue
-            else:
-                print(num, items)
-                num += 1
-        elif head == 'on':  # display header
-            if rows.index(items) == 0:
-                print(items)
-                num += 1
-            else:
-                print(num, items)
-                num += 1
-
-    print()
-    print_format(rows, number="on", head="off")
+    teacher_name = ('Pepper', 'Pots')
+    first, last = teacher_name
+    print(f"Teacher {first} {last} added to the database.")
 
     cursor.close()
     db.close()

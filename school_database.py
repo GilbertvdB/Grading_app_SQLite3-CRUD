@@ -49,13 +49,20 @@ def get_header(table_name: str):
 def prompt_info(info: tuple):
     """ Ask user for the input data for every column header in the
     tabel."""
-    columns, t_name = info
+    columns, table_name = info
     values = []
-    print(t_name)
+    print(table_name)
     for col in columns:
-        i = input(f"{col}: ")
-        values.append(i)
-    return columns, tuple(values), t_name
+        if col == "Email":
+            i = ""
+            values.append(i)
+        elif col == "LevelCode":
+            i = input(f"{col}(ST or Te): ")
+            values.append(i)
+        else:
+            i = input(f"{col}: ")
+            values.append(i)
+    return columns, tuple(values), table_name
 
 
 def input_info(info):
@@ -130,7 +137,8 @@ def add_to_reg():
     Returning the firstname of the person. """
     head = get_header('Registry')
     info = prompt_info(head)
-    firstname = info[1][2]
+    firstname = info[1][3]
+    prefix = info[1][2]
     lastname = info[1][1]
     input_info(info)
     return firstname, lastname
@@ -150,6 +158,8 @@ def add_student():
     # create email address
     row = get_t_info(where='RegId', table='Registry', target=student_id)
     email_generator(row)
+    first, last = student
+    print(f"Student {first} {last} added to the database.")
 
 
 def add_teacher():
@@ -171,6 +181,8 @@ def add_teacher():
         pass
     else:
         print("Not valid choice")
+    first, last = teacher_name
+    print(f"Teacher {first} {last} added to the database.")
 
 
 def get_teacher_info():
@@ -242,15 +254,14 @@ def get_stu_fullname(id_student):
     print(*row)
 
 
-# todo rename function
 # get report card with search options
-def search_query():
+def view_reportcard():
     search_string = input("Please enter student id, class or student full name: ")
     print()
     string_list = search_string.title().split(' ')  # list with names
     if search_string.isnumeric():  # student id provided.
         student_id = search_string
-        get_stu_fullname(student_id)
+        get_stu_fullname(student_id)  # TODO double check - does it do something?
         print_report(student_id)
     elif len(search_string) == 2 and search_string.isalnum():  # class id prov.
         class_name = search_string.upper()
@@ -276,13 +287,6 @@ def search_query():
             print_report(student_id)
     else:
         print("Type a valid search option!")
-
-
-def get_reportcard():
-    student_id = input("Please enter student id: ")
-    print()
-    get_stu_fullname(student_id)
-    print_report(student_id)
 
 
 def print_report(id_student):
@@ -346,28 +350,26 @@ def update_subjects():
 
     # print a list of the already known subjects
     subject_list = get_subjects()
-    print("Huidige vakken")
-    print("Subjects: ")
-    print_format(subject_list)
+    view_subjects()
     print()
 
     # prompts user for the subject name of 0 to exit.
-    subject_code = input("Vak toevoegen of 0 voor Exit: ")
+    subject_code = (input("Add subject code or press 0 voor Exit: ")).upper()
     check = [bool(item) for item in subject_list if subject_code in item]
     while subject_code != '0':
         if bool(check) is True:  # subject already exists.
-            print("Vak bestaat al!")
+            print("Subject already exists!")
             print()
             break
         else:  # subject does not exist yet. Add to database
-            subject = input("Vak naam: ")
+            subject = input("Subject name: ")
             cursor.execute(f"INSERT INTO Subjects ('SubjectCode', 'SubjectName') "
                            f"VALUES ('{subject_code}', '{subject}')")
             cursor.execute(f"ALTER TABLE Grades_q1 ADD {subject_code} NUMERIC")
             db.commit()  # confirm the changes in the database.
             print()
-            print(f"Vak: '{subject_code}' - {subject} toegevoegd.")
-            print_format(get_subjects())  # let the user know update is complete.
+            print(f"Subject: '{subject_code}' - {subject} has been added.")
+            view_subjects()  # let the user know update is complete.
             subject_code = '0'
     else:
         print()
@@ -495,7 +497,6 @@ if __name__ == '__main__':
 
     main_menu = menu_files.main_menu
     menu_files.menus(main_menu)
-
 
 
     cursor.close()
