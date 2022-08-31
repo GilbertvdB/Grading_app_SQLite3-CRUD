@@ -248,6 +248,19 @@ def print_format(row, number="off", head="off"):
     print()
 
 
+def profile_display_format(lst):
+    """Display table information neatly under each other. Takes a list with two tuples."""
+    new_list = list(zip(lst[0], lst[1]))  # ie (RegId, 39)
+    for items in new_list:
+        # if new_list.index(items) == 0 or new_list.index(items) == 1:
+        #     continue  # skip the first two items. (RegId and LevelCode)
+        # else:
+        if items[1] is None:
+            print(f"{items[0] + ':':<14} - ")
+        else:
+            print(f"{items[0] + ':':<14}{items[1]}")
+
+
 def get_stu_fullname(id_student):
     cursor.execute(f"SELECT FirstName, LastName FROM Registry WHERE RegId = {id_student} ")
     row = cursor.fetchone()
@@ -483,6 +496,38 @@ def view_grade():
     grade_display_results(choice_subject, choice_class)
 
 
+def profile_search_naw():
+    # person NAW
+    search = input("Enter first or last name: ")
+    if search == '':
+        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' ")
+        row = cursor.fetchall()
+    else:
+        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' "
+                              f"WHERE LastName LIKE '%{search}%' OR FirstName LIKE '%{search}%' ")
+        row = cursor.fetchall()
+    print()
+    header = tuple([x[0] for x in data.description])  # return column names
+    row.insert(0, header)
+    print_format(row, head='on', number='on')
+    return row
+
+
+def profile_view_info(row):
+    choice = input("Choose a person by entering a number: ")
+    person = row[int(choice)]
+    naw = get_t_info(select='RegId', table='fullnames_view', where='FullName', target=person[0])
+    reg_id = naw[1][0]
+    selection = 'FirstName, Prefix, LastName, Birthdate, Address, City, PostalCode, Phone, Email'
+    data = get_t_info(select=selection, table='Registry', where='RegId', target=reg_id)
+    profile_display_format(data)
+
+
+def view_profile():
+    data = profile_search_naw()
+    profile_view_info(data)
+    print()
+
 # create view class info function, updated table headers
 # TODO teacher name codes, function to update grades,
 # todo subject profiles, taal, exact.
@@ -495,38 +540,9 @@ if __name__ == '__main__':
     cl = 'Classes'
     sb = 'Subjects'
 
-    # main_menu = menu_files.main_menu
-    # menu_files.menus(main_menu)
+    main_menu = menu_files.main_menu
+    menu_files.menus(main_menu)
 
-    # view NAW
-    row = get_t_info(table='Registry', where='RegId', target=39)
-    print_format(row, head='on')
-
-    search = input("Enter first or last name: ")
-    # row = get_t_info(table='Registry', where='LastName', target=search)
-    # print_format(row, head='on')
-
-    if search == '':
-        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' ")
-        row = cursor.fetchall()
-    else:
-        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' "
-                              f"WHERE LastName LIKE '%{search}%' OR FirstName LIKE '%{search}%' ")
-        row = cursor.fetchall()
-    # for items in row:
-    #     print(items)
-
-    print()
-    header = tuple([x[0] for x in data.description])  # return column names
-    row.insert(0, header)
-    print_format(row, head='on', number='on')
-
-    choice = input("Choose a person by entering a number: ")
-    person = row[int(choice)]
-    print(person)
-
-    naw = get_t_info(select='RegId', table='fullnames_view', where='FullName', target=person[0])
-    print(naw)
 
     cursor.close()
     db.close()
