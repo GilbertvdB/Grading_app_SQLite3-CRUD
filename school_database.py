@@ -495,9 +495,38 @@ if __name__ == '__main__':
     cl = 'Classes'
     sb = 'Subjects'
 
-    main_menu = menu_files.main_menu
-    menu_files.menus(main_menu)
+    # main_menu = menu_files.main_menu
+    # menu_files.menus(main_menu)
 
+    # view NAW
+    row = get_t_info(table='Registry', where='RegId', target=39)
+    print_format(row, head='on')
+
+    search = input("Enter first or last name: ")
+    # row = get_t_info(table='Registry', where='LastName', target=search)
+    # print_format(row, head='on')
+
+    if search == '':
+        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' ")
+        row = cursor.fetchall()
+    else:
+        data = cursor.execute(f"SELECT Fullname as Name FROM 'fullnames_view' "
+                              f"WHERE LastName LIKE '%{search}%' OR FirstName LIKE '%{search}%' ")
+        row = cursor.fetchall()
+    # for items in row:
+    #     print(items)
+
+    print()
+    header = tuple([x[0] for x in data.description])  # return column names
+    row.insert(0, header)
+    print_format(row, head='on', number='on')
+
+    choice = input("Choose a person by entering a number: ")
+    person = row[int(choice)]
+    print(person)
+
+    naw = get_t_info(select='RegId', table='fullnames_view', where='FullName', target=person[0])
+    print(naw)
 
     cursor.close()
     db.close()
