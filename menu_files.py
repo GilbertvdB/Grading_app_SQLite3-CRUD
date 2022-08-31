@@ -22,7 +22,7 @@ admin_menu = [["Add Student", add_student],
               ["View Profile", view_profile],
               ["Add New Class", add_class],
               ["Update Class Mentor", update_class_mentor],
-              ["View Subjects", view_subjects],  # return
+              ["View Subjects", view_subjects],
               ["Update Subjects", update_subjects],
               ["View Grades", view_grade],
               ["Update Grades", update_grade],
@@ -32,6 +32,8 @@ admin_menu = [["Add Student", add_student],
 
 teacher_menu = [["Student Info", get_student_info],
                 ["Teacher Info", get_teacher_info],
+                ["View Profile", view_profile],
+                ["All Class Info", view_class_info],
                 ["View Report Card", view_reportcard],
                 ["View Subjects", view_subjects],
                 ["Update Grade", update_grade]
@@ -39,6 +41,7 @@ teacher_menu = [["Student Info", get_student_info],
 
 student_menu = [["Rapport - Dominion", dom],
                 ["View Report Card", view_reportcard],
+                ["View Profile", view_profile],
                 ]
 
 test_menu = [["Helo", hello], ["Dominion", dom]]
@@ -53,36 +56,6 @@ def display_menu(options: list):
         print(f'{index + 1}: {optie[0]}')
     print("0: Exit")
     print("-" * 20)
-
-# original
-# def menus(menu_list: list):
-#     global mn
-#     main = menu_list
-#     x = y = 0
-#     level = "user_menu"
-#     while True:
-#         if level == "user_menu":
-#             mn = main[x]
-#         elif level == "user_sub_menu":
-#             mn = main[y]
-#
-#         display_menu(mn)
-#         # todo Try except clause
-#         # todo - issue is the first choice and the elif choice
-#         choice = input("Choose an option: ")
-#         x = int(choice)
-#         print()
-#         if x == 0:
-#             break
-#         elif level == "user_sub_menu":
-#             main[y][x - 1][1]()  # run function
-#             input("Press Enter to continue")  # pause after running func
-#             pass
-#         elif level == "user_menu":
-#             level = "user_sub_menu"
-#             y = x
-#         else:
-#             print("Choose an option: ")
 
 
 # todo - continue with menu

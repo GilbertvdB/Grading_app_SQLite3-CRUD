@@ -127,7 +127,7 @@ def add_class():
 
 def set_grading_profile(student_id, class_id):
     """ Creates a new grading profile from a class id and student id."""
-    cursor.execute(f"INSERT INTO Grades_q1 ('StudentId', 'ClassID') "
+    cursor.execute(f"INSERT INTO Grades_q1_2022 ('StudentId', 'ClassID') "
                    f"VALUES ({student_id}, '{class_id}') ")
     db.commit()
 
@@ -307,8 +307,8 @@ def print_report(id_student):
       the database and printing it a viewable format."""
 
     # fetch the student's grades from the database
-    data = cursor.execute("SELECT * FROM Grades_q1")
-    cursor.execute(f"SELECT * FROM Grades_q1 WHERE StudentId = {id_student} ")
+    data = cursor.execute("SELECT * FROM Grades_q1_2022")
+    cursor.execute(f"SELECT * FROM Grades_q1_2022 WHERE StudentId = {id_student} ")
     row = cursor.fetchone()
 
     x = 0
@@ -345,7 +345,7 @@ def set_grade(id_student):
         cijfer = input(f"Enter a grade for {vak}: ")
         print()
         # update grade
-        cursor.execute(f"UPDATE Grades_q1 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
+        cursor.execute(f"UPDATE Grades_q1_2022 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
         db.commit()  # confirm the changes in the database.
         # update another subject?
         choice = input("Continue updating? Y / N: ")
@@ -378,7 +378,7 @@ def update_subjects():
             subject = input("Subject name: ")
             cursor.execute(f"INSERT INTO Subjects ('SubjectCode', 'SubjectName') "
                            f"VALUES ('{subject_code}', '{subject}')")
-            cursor.execute(f"ALTER TABLE Grades_q1 ADD {subject_code} NUMERIC")
+            cursor.execute(f"ALTER TABLE Grades_q1_2022 ADD {subject_code} NUMERIC")
             db.commit()  # confirm the changes in the database.
             print()
             print(f"Subject: '{subject_code}' - {subject} has been added.")
