@@ -1,4 +1,4 @@
-# RapportSysteem
+# Grading_app
 This will be my practice project. 
 I'm creating a grading application to practice coding and using a database.
 
