@@ -1,15 +1,15 @@
 # RapportSysteem
 This will be my practice project. 
-Creating a grading system.
+I'm creating a grading application to practice coding and using a database.
 
 </br>Main goal:
-<ul> - Practise retrieving and modifying data from a database using Python & Sqlite database.
+<ul> - Practice retrieving and modifying data from a database using Python & Sqlite database.
 </br>- Process data using the CRUD method. (CREATE, READ, UPDATE and DELETE)</ul>
 
 </br>The challenge is to start simple and updrage the codes.
 </br> And as im learning more about programming and development make changes that reflect what i've learned.
 
-</br>Task: Create a grading systeem for a school & storing the information in a database. 
+</br>Task: Create a grading application for a school & storing the information in a database. 
 </br>Entering a grade per student per subject.
 
 </br> With every new iteration or new branch I wont merge it with the main. This way I can look at my own progress over time as I learn
