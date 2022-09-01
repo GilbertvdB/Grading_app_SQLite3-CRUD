@@ -1,6 +1,10 @@
 # RapportSysteem
 This will be my practice project. 
-Creating a report grading system
+Creating a grading system.
+
+</br>Main goal:
+<ul> - Practise retrieving and modifying data from a database using Python & Sqlite database.
+</br>- Process data using the CRUD method. (CREATE, READ, UPDATE and DELETE)</ul>
 
 </br>The challenge is to start simple and updrage the codes.
 </br> And as im learning more about programming and development make changes that reflect what i've learned.
