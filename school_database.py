@@ -529,12 +529,10 @@ def view_profile():
     print()
 
 # create view class info function, updated table headers
-# TODO create random info generator to populate tables
 # TODO research table templates (q1, q2, q3, q4, finals)
 # TODO teacher name codes
 # todo subject profiles, taal, exact.
 # todo check pivot info for subject & grades table
-# todo expand grades tables to Q1 Q2 Q3 Q4 year.
 
 
 if __name__ == '__main__':

@@ -30,17 +30,17 @@ def email_generator(rows):
 
 if __name__ == '__main__':
     # Code to generate email for the whole registry list!
-    def get_table_info(table: str):
-        """ Retrieve and display all the information from a table."""
-        cursor.execute(f"SELECT * FROM {table}")
-        rows = cursor.fetchall()
-        return rows
-
-
-    rows = get_table_info('Registry')
-    for lines in rows:
-        mail, reg_id = generate_email(lines)
-        update_email_in_registry(mail, reg_id)
+    # def get_table_info(table: str):
+    #     """ Retrieve and display all the information from a table."""
+    #     cursor.execute(f"SELECT * FROM {table}")
+    #     rows = cursor.fetchall()
+    #     return rows
+    #
+    #
+    # rows = get_table_info('Registry')
+    # for lines in rows:
+    #     mail, reg_id = generate_email(lines)
+    #     update_email_in_registry(mail, reg_id)
 
     cursor.close()
     db.close()
