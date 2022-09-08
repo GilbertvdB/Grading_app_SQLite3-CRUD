@@ -2,6 +2,7 @@
 import sqlite3
 import menu_files
 from e_mail_generator import email_generator
+from template_grades import main as add_temp
 
 db = sqlite3.connect("school.db")
 cursor = db.cursor()
@@ -127,7 +128,7 @@ def add_class():
 
 def set_grading_profile(student_id, class_id):
     """ Creates a new grading profile from a class id and student id."""
-    cursor.execute(f"INSERT INTO Grades_q1_2022 ('StudentId', 'ClassID') "
+    cursor.execute(f"INSERT INTO grades_t1_2022 ('student_id', 'class_id') "
                    f"VALUES ({student_id}, '{class_id}') ")
     db.commit()
 
@@ -287,8 +288,8 @@ def view_reportcard():
         student = input("Choose student: ")
         choice = rows[int(student)]
         f_name, l_name, _, _ = choice
-
         student_id = get_reg_id(f_name, l_name)  # get id number
+        print()
         print(f_name, l_name)
         print_report(student_id)
     elif len(string_list) > 1:  # firstname and lastname are provided.
@@ -306,18 +307,24 @@ def print_report(id_student):
     """ Display a student's reportcard by getting the grades from
       the database and printing it a viewable format."""
 
+    trim_list = ['t1', 't2', 't3']
+    grades_list = []
     # fetch the student's grades from the database
-    data = cursor.execute("SELECT * FROM Grades_q1_2022")
-    cursor.execute(f"SELECT * FROM Grades_q1_2022 WHERE StudentId = {id_student} ")
-    row = cursor.fetchone()
+    data = cursor.execute("SELECT * FROM grades_t1_2022")
+    for trim in trim_list:
+        cursor.execute(f"SELECT * FROM grades_{trim}_2022 WHERE student_id = {id_student} ")
+        row = cursor.fetchone()
+        grades_list.append(row)
 
     x = 0
     y = '\t\t'
+    print('  \t\tT1 \t\tT2 \t\tT3')
     for column in data.description:
         if x == 0 or x == 1:
             x += 1
         else:
-            print(column[0], row[x], sep=y, end='\n')
+            print(column[0], float(grades_list[0][x]), float(grades_list[1][x]),
+                  float(grades_list[2][x]), sep=y, end='\n')
             x += 1
     print()
 
@@ -345,7 +352,7 @@ def set_grade(id_student):
         cijfer = input(f"Enter a grade for {vak}: ")
         print()
         # update grade
-        cursor.execute(f"UPDATE Grades_q1_2022 SET {vak} = '{cijfer}' WHERE StudentID = {id_student} ")
+        cursor.execute(f"UPDATE grades_t1_2022 SET {vak} = '{cijfer}' WHERE student_id = {id_student} ")
         db.commit()  # confirm the changes in the database.
         # update another subject?
         choice = input("Continue updating? Y / N: ")
@@ -378,7 +385,7 @@ def update_subjects():
             subject = input("Subject name: ")
             cursor.execute(f"INSERT INTO Subjects ('SubjectCode', 'SubjectName') "
                            f"VALUES ('{subject_code}', '{subject}')")
-            cursor.execute(f"ALTER TABLE Grades_q1_2022 ADD {subject_code} NUMERIC")
+            cursor.execute(f"ALTER TABLE grades_t1_2022 ADD {subject_code} NUMERIC")
             db.commit()  # confirm the changes in the database.
             print()
             print(f"Subject: '{subject_code}' - {subject} has been added.")
@@ -442,6 +449,11 @@ def view_class_info():
     print_format(info, head='on')
 
 
+def grade_choose_trimester():
+    choice_trimester = input("Choose trimester. Enter T1, T2 or T3: ").lower()
+    return choice_trimester
+
+
 def grade_choose_subject():
     valid_choice = False
     while valid_choice is not True:
@@ -468,32 +480,34 @@ def grade_choose_classes():
             return classes
 
 
-def view_grades_all():
-    row = get_t_info(table='all_grades')
+def view_grades_all(trimester):
+    row = get_t_info(table='all_grades_' + trimester + '_2022')
     print_format(row, head='on')
 
 
-def grade_display_results(subject, classes):
+def grade_display_results(trimester, subject, classes):
+    print("Trimester:", trimester.upper())
     if classes == '' and subject == '':
-        view_grades_all()
+        view_grades_all(trimester)
     elif classes == '':
-        row = get_t_info(select=f'{subject}', table='all_grades')
+        row = get_t_info(select=f'{subject}', table='all_grades_' + trimester + '_2022')
         print(*[x[0] for x in row if x[0] is not None], sep='\n')
     elif subject == '':
-        row = get_t_info(select='*', table='all_grades',
+        row = get_t_info(select='*', table='all_grades_' + trimester + '_2022',
                          where='Class', target=f'{classes}')
         print_format(row, head='on')
     else:
-        row = get_t_info(select=f'{subject}', table='all_grades',
+        row = get_t_info(select=f'{subject}', table='all_grades_' + trimester + '_2022',
                          where='Class', target=f'{classes}')
         print(*[x[0] for x in row if x[0] is not None], sep='\n')
 
 
 def view_grade():
+    choice_trimester = grade_choose_trimester()
     choice_subject = grade_choose_subject()
     choice_class = grade_choose_classes()
     print()
-    grade_display_results(choice_subject, choice_class)
+    grade_display_results(choice_trimester, choice_subject, choice_class)
 
 
 def profile_search_naw():
@@ -529,6 +543,7 @@ def view_profile():
     print()
 
 # create view class info function, updated table headers
+# TODO add create view to template_grades
 # TODO research table templates (q1, q2, q3, q4, finals)
 # TODO teacher name codes
 # todo subject profiles, taal, exact.

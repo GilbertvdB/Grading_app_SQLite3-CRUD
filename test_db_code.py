@@ -105,41 +105,74 @@ def print_format(row, number="off", head="off"):
     print()
 
 
+def print_report(id_student):
+    """ Display a student's reportcard by getting the grades from
+      the database and printing it a viewable format."""
+
+    # fetch the student's grades from the database
+    data = cursor.execute("SELECT * FROM grades_t1_2022")
+    cursor.execute(f"SELECT * FROM grades_t1_2022 WHERE student_id = {id_student} ")
+    row = cursor.fetchone()
+
+    x = 0
+    y = '\t\t'
+    for column in data.description:
+        if x == 0 or x == 1:
+            x += 1
+        else:
+            print(column[0], row[x], sep=y, end='\n')
+            x += 1
+    print()
+
+
 if __name__ == '__main__':
 
     # teacher_name = ('Pepper', 'Pots')
     # first, last = teacher_name
     # print(f"Teacher {first} {last} added to the database.")
 
-    data = [('RegId', 'LevelCode', 'LastName', 'Prefix', 'FirstName', 'Birthdate', 'Address', 'City', 'PostalCode', 'Phone', 'Email'),
-           (39, 'ST', 'Benz', 'Der', 'Imma', '31-03-1996', 'WatchStreet 12', 'Bronx', '1010BX', None, 'd_benz@school.com')]
+    # data = [('RegId', 'LevelCode', 'LastName', 'Prefix', 'FirstName', 'Birthdate', 'Address', 'City', 'PostalCode', 'Phone', 'Email'),
+    #        (39, 'ST', 'Benz', 'Der', 'Imma', '31-03-1996', 'WatchStreet 12', 'Bronx', '1010BX', None, 'd_benz@school.com')]
+    #
+    # def profile_display_format(lst):
+    #     """Display table information neatly under each other. Takes a list with two tuples."""
+    #     new_list = list(zip(lst[0], lst[1]))  # ie (RegId, 39)
+    #     for items in new_list:
+    #         if new_list.index(items) == 0 or new_list.index(items) == 1:
+    #             continue  # skip the first two items. (RegId and LevelCode)
+    #         else:
+    #             if items[1] is None:
+    #                 print(f"{items[0] + ':':<14} - ")
+    #             else:
+    #                 print(f"{items[0] + ':':<14}{items[1]}")
+    #
+    #
+    # profile_display_format(data)
 
-    def profile_display_format(lst):
-        """Display table information neatly under each other. Takes a list with two tuples."""
-        new_list = list(zip(lst[0], lst[1]))  # ie (RegId, 39)
-        for items in new_list:
-            if new_list.index(items) == 0 or new_list.index(items) == 1:
-                continue  # skip the first two items. (RegId and LevelCode)
-            else:
-                if items[1] is None:
-                    print(f"{items[0] + ':':<14} - ")
-                else:
-                    print(f"{items[0] + ':':<14}{items[1]}")
+    id_student = 57
+    trim_list = ['t1', 't2', 't3']
+    grades_list = []
+    # fetch the student's grades from the database
+    data = cursor.execute("SELECT * FROM grades_t1_2022")
+
+    for trim in trim_list:
+        cursor.execute(f"SELECT * FROM grades_{trim}_2022 WHERE student_id = {id_student} ")
+        row = cursor.fetchone()
+        grades_list.append(row)
+
+    x = 0
+    y = '\t\t'
+    print('  \t\tT1 \t\tT2 \t\tT3')
+    for column in data.description:
+        if x == 0 or x == 1:
+            x += 1
+        else:
+            print(column[0], float(grades_list[0][x]), float(grades_list[1][x]),
+                  float(grades_list[2][x]), sep=y, end='\n')
+            x += 1
+    print()
 
 
-    profile_display_format(data)
-
-
-
-    # for x, y in new_l:
-    #     if new_l.index((x, y)) == 0 or new_l.index((x, y)) == 1:
-    #         continue
-    #     else:
-    #         print(f"{x + ':':<13}{y}")
-
-
-    # for i in range(l):
-    #     print(lst)
 
     cursor.close()
     db.close()

@@ -26,6 +26,7 @@ admin_menu = [["Add Student", add_student],
               ["Update Subjects", update_subjects],
               ["View Grades", view_grade],
               ["Update Grades", update_grade],
+              ["Add Grades Template", add_temp],
               ["View Report Card", view_reportcard],
               ["Dominion", dom]
               ]
